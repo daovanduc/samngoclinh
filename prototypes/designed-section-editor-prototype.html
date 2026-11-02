@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Section editor · Prototype</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --forest: #14543c;
+      --deep: #103e2d;
+      --leaf: #e7efe9;
+      --gold: #d7bc58;
+      --paper: #f5f4ed;
+      --ink: #183c2e;
+      --muted: #69766f;
+      --line: #dbe2dc;
+      --white: #fff;
+      font-family: "Aptos", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: #e9eee9;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; }
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible, a:focus-visible { outline: 3px solid #c5a83d; outline-offset: 2px; }
+    .topbar { min-height: 66px; display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 12px clamp(18px, 4vw, 58px); background: var(--deep); color: white; }
+    .brand { display: flex; align-items: center; gap: 12px; color: white; text-decoration: none; font-weight: 700; letter-spacing: .03em; }
+    .brand img { width: 38px; height: 38px; object-fit: contain; }
+    .brand small { display: block; color: var(--gold); font-size: 10px; font-weight: 600; letter-spacing: .14em; }
+    .prototype-tag { padding: 7px 11px; border: 1px solid #72937d; border-radius: 999px; color: #e4e9db; font-size: 12px; }
+    main { width: min(1440px, 100%); margin: 0 auto; padding: 30px clamp(16px, 3vw, 38px) 56px; }
+    .intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 20px; margin-bottom: 24px; }
+    .eyebrow { margin: 0 0 8px; color: #647d6c; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+    h1 { margin: 0; color: var(--deep); font-family: Georgia, serif; font-size: clamp(28px, 4vw, 42px); font-weight: 500; letter-spacing: -.025em; }
+    .intro p:last-child { max-width: 790px; margin: 10px 0 0; color: #53665a; line-height: 1.6; }
+    .memory-note { max-width: 230px; padding: 12px 15px; border-left: 3px solid var(--gold); background: #f8f7f0; color: #58685d; font-size: 12px; line-height: 1.5; }
+    .walkthroughs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 24px 0 20px; }
+    .walkthroughs strong { margin-right: 5px; font-size: 13px; }
+    .walk-tab { border: 1px solid #cbd7ce; border-radius: 5px; padding: 9px 13px; background: transparent; color: #345644; }
+    .walk-tab[aria-selected="true"] { background: var(--forest); border-color: var(--forest); color: white; }
+    .walk-copy { min-height: 40px; margin: 0 0 18px; color: #637269; font-size: 13px; line-height: 1.5; }
+    .workbench { display: grid; grid-template-columns: minmax(260px, .78fr) minmax(0, 1.6fr); gap: 18px; align-items: start; }
+    .panel { overflow: hidden; border: 1px solid #d7e0d8; border-radius: 10px; background: var(--white); box-shadow: 0 7px 25px rgba(23, 61, 43, .06); }
+    .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 54px; padding: 13px 17px; border-bottom: 1px solid var(--line); }
+    .panel-head h2 { margin: 0; color: var(--deep); font-size: 15px; }
+    .panel-body { padding: 16px; }
+    .page-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 5px; border-radius: 7px; background: #edf2ed; }
+    .page-switch button { min-height: 36px; border: 0; border-radius: 5px; background: transparent; color: #496251; font-size: 12px; }
+    .page-switch button[aria-pressed="true"] { background: white; color: var(--deep); box-shadow: 0 1px 4px #183c2e1c; font-weight: 700; }
+    .section-list { display: grid; gap: 7px; margin: 15px 0; padding: 0; list-style: none; }
+    .section-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 7px; padding: 8px; border: 1px solid #e1e8e2; border-radius: 6px; }
+    .section-row.selected { border-color: #679078; background: #f0f6f1; box-shadow: inset 3px 0 #2a714f; }
+    .section-pick { min-width: 0; padding: 3px; border: 0; background: transparent; color: #244c36; text-align: left; }
+    .section-pick b { display: block; overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+    .section-pick small { display: block; margin-top: 3px; color: #78857d; font-size: 10px; }
+    .move-controls { display: flex; gap: 3px; }
+    .icon-button { width: 29px; height: 29px; border: 1px solid #d9e2da; border-radius: 5px; background: white; color: #365841; }
+    .icon-button:disabled { opacity: .38; cursor: not-allowed; }
+    .remove-button { color: #8d4c40; }
+    .add-row { display: flex; gap: 7px; margin: 12px 0 18px; }
+    .add-row select { min-width: 0; flex: 1; height: 38px; border: 1px solid #d5dfd6; border-radius: 5px; padding: 0 9px; background: white; color: #284b37; font-size: 12px; }
+    .button { min-height: 38px; border: 1px solid #cad8cc; border-radius: 5px; padding: 8px 12px; background: #fff; color: #244b36; font-size: 12px; font-weight: 650; }
+    .button.primary { border-color: var(--forest); background: var(--forest); color: white; }
+    .button.gold { border-color: #c2a943; background: var(--gold); color: #253f2f; }
+    .button:disabled { opacity: .45; cursor: not-allowed; }
+    .edit-fields { display: grid; gap: 11px; padding-top: 15px; border-top: 1px solid var(--line); }
+    .edit-fields h3 { margin: 0; color: var(--deep); font-size: 13px; }
+    .field { display: grid; gap: 5px; }
+    .field label { color: #68786d; font-size: 11px; font-weight: 650; }
+    .field input, .field textarea { width: 100%; border: 1px solid #d5dfd6; border-radius: 5px; padding: 9px 10px; background: #fff; color: #284b37; font-size: 12px; }
+    .field textarea { min-height: 74px; resize: vertical; line-height: 1.45; }
+    .action-bar { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 14px; }
+    .publish-state { display: flex; align-items: center; gap: 8px; margin-top: 13px; color: #65746a; font-size: 11px; }
+    .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #40815a; }
+    .live-dot.dirty { background: #d39b39; }
+    .preview-head { align-items: flex-start; }
+    .preview-label { display: flex; align-items: center; gap: 9px; }
+    .view-label { border-radius: 999px; padding: 5px 9px; background: #eaf2ec; color: #346148; font-size: 10px; font-weight: 700; }
+    .view-label.live { background: #e6f3e9; color: #287044; }
+    .preview-tools { display: flex; gap: 7px; flex-wrap: wrap; justify-content: end; }
+    .site-preview { min-height: 540px; overflow: hidden; background: var(--paper); }
+    .site-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 22px; background: #225d3e; color: #fff; }
+    .site-logo { display: flex; align-items: center; gap: 8px; font-family: Georgia, serif; font-size: 18px; font-weight: 700; color: #d9c45e; }
+    .site-logo img { width: 30px; height: 30px; object-fit: contain; }
+    .site-nav-links { display: flex; gap: clamp(10px, 2vw, 24px); color: #f5f7f4; font-size: 10px; font-weight: 700; }
+    .site-content { padding: 18px; background: linear-gradient(#183f2eb3, #183f2e72), url('../assets/images/main-page.jpg') center/cover fixed; }
+    .site-section { margin: 0 0 13px; overflow: hidden; border: 1px solid #ffffff52; border-radius: 11px; background: #14563fd9; color: white; }
+    .site-section:last-child { margin-bottom: 0; }
+    .section-preview-content { padding: 18px 20px; }
+    .site-section h3 { margin: 0 0 7px; font-size: clamp(16px, 2vw, 22px); }
+    .site-section p { max-width: 670px; margin: 0; color: #f1f3ee; font-size: 12px; line-height: 1.55; white-space: pre-line; }
+    .hero-section { min-height: 130px; display: flex; align-items: end; background: linear-gradient(90deg, #0e3a29cf, #154a3480), url('../assets/images/hero-background111.jpg') center 45%/cover; }
+    .hero-section .section-preview-content { width: 100%; padding: 23px 26px; }
+    .hero-section h3 { max-width: 450px; font-family: Georgia, serif; font-size: clamp(24px, 4vw, 37px); font-style: italic; }
+    .category-cards, .product-cards, .certificate-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; margin-top: 14px; }
+    .mini-card { display: grid; justify-items: center; gap: 7px; min-height: 125px; padding: 10px 8px; border-radius: 8px; background: white; color: #21523b; text-align: center; }
+    .mini-card img { width: min(94px, 90%); height: 72px; object-fit: contain; }
+    .mini-card b { font-size: 10px; line-height: 1.3; }
+    .mini-card button { border: 0; border-radius: 999px; padding: 5px 14px; background: #126043; color: white; font-size: 9px; }
+    .product-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .product-cards .mini-card { justify-content: start; min-height: 148px; }
+    .product-cards .mini-card img { height: 86px; }
+    .certificates { display: flex; gap: 7px; margin-top: 13px; padding: 9px; border-radius: 8px; background: #fff; }
+    .certificate-mark { flex: 1; min-height: 50px; display: grid; place-items: center; border: 1px solid #dfe6de; color: #286447; font-size: 9px; font-weight: 700; text-align: center; }
+    .contact-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; align-items: center; }
+    .contact-layout img { width: min(100%, 135px); margin: 0 auto; object-fit: contain; }
+    .detail-hero { display: grid; grid-template-columns: minmax(120px, .9fr) 1.2fr; gap: 16px; align-items: center; }
+    .detail-hero img { width: 100%; height: 185px; object-fit: cover; border: 4px solid #fff; }
+    .detail-hero h3 { font-size: clamp(18px, 2.3vw, 27px); }
+    .detail-hero .category-label { margin: 0 0 6px; color: #d9c45e; font-size: 12px; }
+    .contact-cta { margin-top: 12px; border: 0; border-radius: 999px; padding: 8px 26px; background: #0e6144; color: white; font-size: 11px; }
+    .state-panel { margin-top: 18px; }
+    .state-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .state-item { padding: 10px; border-radius: 6px; background: #f1f5f1; }
+    .state-item small { display: block; margin-bottom: 4px; color: #7a867d; font-size: 10px; }
+    .state-item b { color: #284b37; font-size: 12px; }
+    .state-order { grid-column: 1 / -1; }
+    .state-order p { margin: 4px 0 0; color: #4f6657; font-size: 11px; line-height: 1.55; }
+    .notice { min-height: 22px; margin-top: 10px; color: #356346; font-size: 12px; font-weight: 650; }
+    .walk-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .footer-note { margin-top: 18px; color: #78847b; font-size: 11px; }
+    @media (max-width: 900px) { .workbench { grid-template-columns: 1fr; } .intro { grid-template-columns: 1fr; } .memory-note { max-width: none; } }
+    @media (max-width: 560px) { main { padding-top: 21px; } .topbar { padding-inline: 15px; } .brand { font-size: 13px; } .site-nav { padding: 11px 13px; } .site-nav-links { gap: 8px; font-size: 8px; } .site-content { padding: 10px; } .section-preview-content { padding: 14px; } .mini-card { min-height: 108px; padding: 7px 4px; } .mini-card img { height: 59px; } .detail-hero { grid-template-columns: 1fr; gap: 10px; } .detail-hero img { height: 170px; } .state-grid { grid-template-columns: 1fr 1fr; } .state-order { grid-column: 1 / -1; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top"><img src="../assets/images/logo.png" alt=""><span>THẢO NGUYÊN<small>SÂM NGỌC LINH</small></span></a>
+    <span class="prototype-tag">Editor prototype · changes stay in this tab</span>
+  </header>
+  <main id="top">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">A walkthrough of the owner’s editing flow</p>
+        <h1 id="page-title">Designed sections, ready to publish</h1>
+        <p>This prototype explores how one site owner edits the product listing and a product detail page. Try changing section text, moving or removing a section, then publish and open the public preview.</p>
+      </div>
+      <aside class="memory-note"><b>Prototype only</b><br>Changes live in memory in this browser tab. Nothing is saved to a CMS or the live website.</aside>
+    </section>
+
+    <nav class="walkthroughs" aria-label="Guided walkthroughs">
+      <strong>Try a walkthrough</strong>
+      <button class="walk-tab" data-walk="listing" aria-selected="true">1 · Edit the product listing</button>
+      <button class="walk-tab" data-walk="detail" aria-selected="false">2 · Update a product detail</button>
+      <button class="walk-tab" data-walk="sections" aria-selected="false">3 · Arrange page sections</button>
+    </nav>
+    <p class="walk-copy" id="walk-copy" aria-live="polite"></p>
+
+    <section class="workbench" aria-label="Page editor and public preview">
+      <div class="panel editor-panel">
+        <div class="panel-head"><h2>Page editor</h2><span class="view-label">Owner</span></div>
+        <div class="panel-body">
+          <div class="page-switch" role="group" aria-label="Choose a page">
+            <button id="listing-tab" aria-pressed="true">All products</button>
+            <button id="detail-tab" aria-pressed="false">Product detail</button>
+          </div>
+          <ol class="section-list" id="section-list" aria-label="Page sections"></ol>
+          <div class="add-row">
+            <select id="section-choice" aria-label="Designed section to add"></select>
+            <button class="button" id="add-section">Add section</button>
+          </div>
+          <form class="edit-fields" id="edit-fields">
+            <h3 id="edit-heading">Edit selected section</h3>
+            <div id="field-container"></div>
+          </form>
+          <div class="action-bar">
+            <button class="button primary" id="publish">Save &amp; publish</button>
+            <button class="button" id="open-live">View published page</button>
+          </div>
+          <div class="publish-state"><span class="live-dot" id="publish-dot"></span><span id="publish-status">Published · no pending changes</span></div>
+          <div class="walk-actions"><button class="button" id="walk-step">Start walkthrough</button><button class="button" id="reset">Reset demo</button></div>
+          <div class="notice" id="notice" aria-live="polite"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head preview-head">
+          <div class="preview-label"><h2>Public page preview</h2><span class="view-label" id="preview-mode">Draft preview</span></div>
+          <div class="preview-tools"><button class="button" id="preview-draft">Preview draft</button></div>
+        </div>
+        <div class="site-preview" id="site-preview"></div>
+      </div>
+    </section>
+
+    <section class="panel state-panel">
+      <div class="panel-head"><h2>What the site will keep</h2><span class="view-label">Current state</span></div>
+      <div class="panel-body"><div class="state-grid" id="state-view"></div></div>
+    </section>
+    <p class="footer-note">Built to test the interaction and content boundaries from the page designs. It does not connect to production services.</p>
+  </main>
+
+  <script>
+    // Question: can a one-owner editor make safe, text-only changes to the supplied listing and detail layouts, publish immediately, and preview the result?
+    // A pure reducer models sections and published content; the page below is only a thin interactive shell around it.
+    const EditorModel = (() => {
+      const sectionTypes = {
+        listing: ["hero", "categories", "products", "certificates", "contact"],
+        detail: ["overview", "information", "related"]
+      };
+      const names = { hero: "Hero", categories: "Category cards", products: "All products", certificates: "Certificates", contact: "Store & contact", overview: "Product overview", information: "Product information", related: "Related products" };
+      const initial = {
+        page: "listing", selectedId: "home-products", preview: "draft", version: 1, publishedVersion: 1,
+        pages: {
+          listing: [
+            { id: "home-hero", type: "hero", title: "Tinh hoa từ núi rừng Ngọc Linh", body: "Sản vật quý từ núi rừng Việt Nam, được gìn giữ bằng sự tận tâm." },
+            { id: "home-categories", type: "categories", title: "Danh mục sản phẩm", body: "Khám phá những sản vật từ núi rừng Ngọc Linh." },
+            { id: "home-products", type: "products", title: "Tất cả sản phẩm", body: "Chọn một sản phẩm để xem thông tin chi tiết." },
+            { id: "home-certificates", type: "certificates", title: "Chứng nhận và cam kết", body: "Thông tin chứng nhận và cam kết chất lượng của Thảo Nguyên." },
+            { id: "home-contact", type: "contact", title: "Thông tin cửa hàng & liên hệ", body: "Thảo Nguyên – Sâm Ngọc Linh\nTầng 1, Tòa nhà The ZEI Plaza, Hà Nội" }
+          ],
+          detail: [
+            { id: "detail-overview", type: "overview", category: "Sâm Ngọc Linh", title: "Sâm Ngọc Linh ngâm mật ong", size: "Hũ thủy tinh 500ml", body: "Sâm Ngọc Linh trên 10 năm tuổi, trồng tự nhiên dưới tán rừng già vùng núi Ngọc Linh. Ngâm với mật ong rừng, không chất bảo quản hoặc hương liệu.", cta: "Liên hệ" },
+            { id: "detail-information", type: "information", title: "Thông tin sản phẩm", body: "Công dụng, khuyến dùng và cách dùng được trình bày tại đây theo nội dung đã được cửa hàng xác nhận." },
+            { id: "detail-related", type: "related", title: "Sản phẩm liên quan", body: "Khám phá thêm các sản phẩm cùng danh mục." }
+          ]
+        },
+        published: null
+      };
+      initial.published = structuredClone(initial.pages);
+      const clone = value => structuredClone(value);
+      function reducer(state, action) {
+        const next = clone(state);
+        const page = next.pages[next.page];
+        const index = page.findIndex(section => section.id === next.selectedId);
+        switch (action.type) {
+          case "choosePage": next.page = action.page; next.selectedId = next.pages[action.page][0]?.id ?? null; next.preview = "draft"; break;
+          case "select": next.selectedId = action.id; break;
+          case "edit": if (index >= 0) page[index][action.field] = action.value; next.version++; next.preview = "draft"; break;
+          case "add": { const item = { id: `new-${next.version + 1}`, type: action.sectionType, title: names[action.sectionType], body: "Add the text readers need for this section." }; page.push(item); next.selectedId = item.id; next.version++; next.preview = "draft"; break; }
+          case "remove": if (index >= 0) { page.splice(index, 1); next.selectedId = page[Math.min(index, page.length - 1)]?.id ?? null; next.version++; next.preview = "draft"; } break;
+          case "move": { const target = index + action.direction; if (index >= 0 && target >= 0 && target < page.length) { [page[index], page[target]] = [page[target], page[index]]; next.version++; next.preview = "draft"; } break; }
+          case "publish": next.published = clone(next.pages); next.publishedVersion = next.version; next.preview = "live"; break;
+          case "preview": next.preview = action.mode; break;
+          case "reset": return clone(initial);
+          default: return state;
+        }
+        return next;
+      }
+      return Object.freeze({ initial: clone(initial), reducer, sectionTypes: clone(sectionTypes), names: clone(names) });
+    })();
+
+    let state = structuredClone(EditorModel.initial);
+    let walkthrough = "listing";
+    let stepIndex = -1;
+    const scenarios = {
+      listing: {
+        copy: "Change the all-products section heading, publish it, then open the published preview. Notice the preview only changes after publishing.",
+        steps: [
+          { label: "Select ‘All products’", action: () => dispatch({ type: "select", id: "home-products" }) },
+          { label: "Change its heading", action: () => dispatch({ type: "edit", field: "title", value: "Sản phẩm Thảo Nguyên" }) },
+          { label: "Save & publish", action: () => dispatch({ type: "publish" }) },
+          { label: "Open published page", action: () => dispatch({ type: "preview", mode: "live" }) }
+        ]
+      },
+      detail: {
+        copy: "Switch to a product detail, edit its named product summary, publish, and check the live page. The product photo and page layout remain fixed.",
+        steps: [
+          { label: "Open the product detail page", action: () => dispatch({ type: "choosePage", page: "detail" }) },
+          { label: "Select ‘Product overview’", action: () => dispatch({ type: "select", id: "detail-overview" }) },
+          { label: "Edit the product summary", action: () => dispatch({ type: "edit", field: "body", value: "Sâm Ngọc Linh trồng tự nhiên dưới tán rừng già vùng núi Ngọc Linh, ngâm với mật ong rừng." }) },
+          { label: "Save & publish", action: () => dispatch({ type: "publish" }) },
+          { label: "Open published page", action: () => dispatch({ type: "preview", mode: "live" }) }
+        ]
+      },
+      sections: {
+        copy: "Try the structural controls on a listing page: add one of its designed section types, move it, then remove it. The product detail has a different section library.",
+        steps: [
+          { label: "Select ‘All products’", action: () => { dispatch({ type: "choosePage", page: "listing" }); dispatch({ type: "select", id: "home-products" }); } },
+          { label: "Add a designed section", action: () => dispatch({ type: "add", sectionType: "certificates" }) },
+          { label: "Move the new section up", action: () => dispatch({ type: "move", direction: -1 }) },
+          { label: "Remove the selected section", action: () => dispatch({ type: "remove" }) }
+        ]
+      }
+    };
+    const $ = selector => document.querySelector(selector);
+    const currentSections = () => state.pages[state.page];
+    const shownSections = () => state.preview === "live" ? state.published[state.page] : currentSections();
+    const selected = () => currentSections().find(section => section.id === state.selectedId);
+    const dirty = () => state.version !== state.publishedVersion;
+    function dispatch(action) { state = EditorModel.reducer(state, action); render(); }
+    function el(tag, cls, text) { const node = document.createElement(tag); if (cls) node.className = cls; if (text !== undefined) node.textContent = text; return node; }
+    function makeCard(image, title, buttonText = "Xem thêm") {
+      const card = el("article", "mini-card"); const img = document.createElement("img"); img.src = image; img.alt = ""; card.append(img, el("b", "", title));
+      const button = el("button", "", buttonText); button.type = "button"; button.addEventListener("click", () => { if (state.page === "listing") { dispatch({ type: "choosePage", page: "detail" }); say("Product card opened the product detail page."); } }); card.append(button); return card;
+    }
+    function renderSiteSection(section) {
+      const wrap = el("section", `site-section ${section.type === "hero" ? "hero-section" : ""}`);
+      const content = el("div", "section-preview-content");
+      if (section.type === "overview") {
+        const grid = el("div", "detail-hero"); const img = document.createElement("img"); img.src = "../assets/images/product2.jpg"; img.alt = "Sản phẩm sâm Ngọc Linh ngâm mật ong";
+        const copy = document.createElement("div"); copy.append(el("p", "category-label", section.category), el("h3", "", section.title), el("p", "", section.size), el("p", "", section.body));
+        const contact = el("button", "contact-cta", section.cta); contact.type = "button"; copy.append(contact); grid.append(img, copy); content.append(grid);
+      } else {
+        content.append(el("h3", "", section.title), el("p", "", section.body));
+        if (section.type === "categories") {
+          const cards = el("div", "category-cards");
+          cards.append(makeCard("../assets/images/product1.jpg", "Sâm Ngọc Linh"), makeCard("../assets/images/product4.jpg", "Hồng Đẳng Sâm"), makeCard("../assets/images/product5.jpg", "Lan Kim Tuyến & Trầm Hương")); content.append(cards);
+        }
+        if (section.type === "products" || section.type === "related") {
+          const cards = el("div", "product-cards");
+          cards.append(makeCard("../assets/images/product2.jpg", "Sâm Ngọc Linh ngâm mật ong 500ml", "Liên hệ"), makeCard("../assets/images/product1.jpg", "Rượu củ sâm Ngọc Linh", "Liên hệ"), makeCard("../assets/images/product4.jpg", "Hồng Đẳng Sâm ngâm rượu", "Liên hệ")); content.append(cards);
+        }
+        if (section.type === "certificates") {
+          const row = el("div", "certificates"); ["Nguồn gốc rõ ràng", "Chất lượng", "Cam kết cửa hàng"].forEach(label => row.append(el("div", "certificate-mark", label))); content.append(row);
+        }
+        if (section.type === "contact") {
+          const row = el("div", "contact-layout"); row.append(el("p", "", section.body)); const logo = document.createElement("img"); logo.src = "../assets/images/logo.png"; logo.alt = "Thảo Nguyên"; row.append(logo); content.append(row);
+        }
+        if (section.type === "information") content.append(el("p", "", "Công dụng · Khuyến dùng · Cách dùng"));
+      }
+      wrap.append(content); return wrap;
+    }
+    function renderPreview() {
+      const root = $("#site-preview"); root.replaceChildren();
+      const nav = el("div", "site-nav"); const logo = el("div", "site-logo"); const logoImg = document.createElement("img"); logoImg.src = "../assets/images/logo.png"; logoImg.alt = ""; logo.append(logoImg, document.createTextNode("THẢO NGUYÊN"));
+      nav.append(logo, el("div", "site-nav-links", "GIỚI THIỆU     SẢN PHẨM     NHẬT KÝ NGỌC LINH     LIÊN HỆ"));
+      const content = el("div", "site-content"); shownSections().forEach(section => content.append(renderSiteSection(section))); root.append(nav, content);
+      $("#preview-mode").textContent = state.preview === "live" ? `Published · version ${state.publishedVersion}` : (dirty() ? "Draft preview" : `Published · version ${state.publishedVersion}`);
+      $("#preview-mode").classList.toggle("live", state.preview === "live");
+    }
+    function renderList() {
+      const list = $("#section-list"); list.replaceChildren();
+      currentSections().forEach((section, index) => {
+        const li = el("li", `section-row ${section.id === state.selectedId ? "selected" : ""}`);
+        const pick = el("button", "section-pick"); pick.type = "button"; pick.append(el("b", "", section.title || EditorModel.names[section.type]), el("small", "", EditorModel.names[section.type])); pick.addEventListener("click", () => dispatch({ type: "select", id: section.id }));
+        const controls = el("div", "move-controls");
+        [["↑", -1, "Move section up"], ["↓", 1, "Move section down"]].forEach(([label, direction, aria]) => { const b = el("button", "icon-button", label); b.type = "button"; b.setAttribute("aria-label", aria); b.disabled = index + direction < 0 || index + direction >= currentSections().length; b.addEventListener("click", () => dispatch({ type: "select", id: section.id }) || dispatch({ type: "move", direction })); controls.append(b); });
+        const remove = el("button", "icon-button remove-button", "×"); remove.type = "button"; remove.setAttribute("aria-label", "Remove section"); remove.addEventListener("click", () => { dispatch({ type: "select", id: section.id }); dispatch({ type: "remove" }); say("Section removed from this page draft."); }); controls.append(remove); li.append(pick, controls); list.append(li);
+      });
+      const choice = $("#section-choice"); choice.replaceChildren();
+      EditorModel.sectionTypes[state.page].forEach(type => { const option = document.createElement("option"); option.value = type; option.textContent = EditorModel.names[type]; choice.append(option); });
+      $("#add-section").disabled = EditorModel.sectionTypes[state.page].length === 0;
+    }
+    function renderFields() {
+      const holder = $("#field-container"); holder.replaceChildren(); const section = selected();
+      $("#edit-heading").textContent = section ? `Edit ${EditorModel.names[section.type]}` : "Select a section to edit";
+      if (!section) return;
+      const keys = section.type === "overview" ? [["title", "Product name", "input"], ["category", "Category", "input"], ["size", "Package size", "input"], ["body", "Product summary", "textarea"], ["cta", "Contact button label", "input"]]
+        : section.type === "information" ? [["title", "Section title", "input"], ["body", "Product information", "textarea"]]
+        : section.type === "related" ? [["title", "Section title", "input"], ["body", "Short introduction", "textarea"]]
+        : [["title", "Section title", "input"], ["body", "Supporting text", "textarea"]];
+      keys.forEach(([key, label, kind]) => {
+        const box = el("div", "field"); const id = `field-${key}`; const name = el("label", "", label); name.htmlFor = id;
+        const input = document.createElement(kind); input.id = id; input.value = section[key] || ""; input.addEventListener("input", () => { state = EditorModel.reducer(state, { type: "edit", field: key, value: input.value }); renderPreview(); renderState(); }); box.append(name, input); holder.append(box);
+      });
+    }
+    function renderState() {
+      const root = $("#state-view"); root.replaceChildren(); const pageName = state.page === "listing" ? "All products" : "Sâm Ngọc Linh ngâm mật ong · 500ml";
+      [["Page", pageName], ["Status", dirty() ? "Unsaved changes" : `Published · version ${state.publishedVersion}`], ["Sections", String(currentSections().length)]].forEach(([label, value]) => { const item = el("div", "state-item"); item.append(el("small", "", label), el("b", "", value)); root.append(item); });
+      const order = el("div", "state-item state-order"); order.append(el("small", "", "Section order"), el("p", "", currentSections().map((section, i) => `${i + 1}. ${section.title || EditorModel.names[section.type]}`).join("  /  ") || "No sections on this page")); root.append(order);
+      $("#publish").disabled = !dirty(); $("#publish-dot").classList.toggle("dirty", dirty()); $("#publish-status").textContent = dirty() ? "Changes not published" : `Published · version ${state.publishedVersion}`;
+    }
+    function render() {
+      $("#listing-tab").setAttribute("aria-pressed", String(state.page === "listing")); $("#detail-tab").setAttribute("aria-pressed", String(state.page === "detail"));
+      renderList(); renderFields(); renderPreview(); renderState();
+    }
+    function say(message) { $("#notice").textContent = message; }
+    function setWalk(name) { walkthrough = name; stepIndex = -1; document.querySelectorAll(".walk-tab").forEach(button => button.setAttribute("aria-selected", String(button.dataset.walk === name))); $("#walk-copy").textContent = scenarios[name].copy; $("#walk-step").textContent = `Start: ${scenarios[name].steps[0].label}`; }
+    $("#edit-fields").addEventListener("submit", event => event.preventDefault());
+    $("#listing-tab").addEventListener("click", () => dispatch({ type: "choosePage", page: "listing" }));
+    $("#detail-tab").addEventListener("click", () => dispatch({ type: "choosePage", page: "detail" }));
+    $("#add-section").addEventListener("click", () => { dispatch({ type: "add", sectionType: $("#section-choice").value }); say("Designed section added to this page draft."); });
+    $("#publish").addEventListener("click", () => { dispatch({ type: "publish" }); say("Published. The public preview now shows these changes."); });
+    $("#open-live").addEventListener("click", () => { dispatch({ type: "preview", mode: "live" }); say("Showing the published page."); });
+    $("#preview-draft").addEventListener("click", () => { dispatch({ type: "preview", mode: "draft" }); say("Showing the current page draft."); });
+    $("#reset").addEventListener("click", () => { dispatch({ type: "reset" }); stepIndex = -1; setWalk(walkthrough); say("Demo reset to the initial pages."); });
+    document.querySelectorAll(".walk-tab").forEach(button => button.addEventListener("click", () => setWalk(button.dataset.walk)));
+    $("#walk-step").addEventListener("click", () => {
+      const steps = scenarios[walkthrough].steps;
+      if (stepIndex < 0) { dispatch({ type: "reset" }); stepIndex = 0; }
+      if (stepIndex < steps.length) { const step = steps[stepIndex]; step.action(); say(`Done: ${step.label}`); stepIndex++; $("#walk-step").textContent = stepIndex < steps.length ? `Next: ${steps[stepIndex].label}` : "Walkthrough complete · restart"; }
+      else { stepIndex = -1; $("#walk-step").textContent = `Start: ${steps[0].label}`; say("Walkthrough ready to run again."); }
+    });
+    render(); setWalk("listing");
+  </script>
+</body>
+</html>
