@@ -1,0 +1,19 @@
+{
+  "name": "sam-ngoc-linh-site",
+  "type": "module",
+  "engines": { "node": ">=20.19.0" },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "astro": "^5.1.0",
+    "typescript": "^5.7.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1"
+  }
+}
