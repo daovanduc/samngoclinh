@@ -24,10 +24,10 @@ const { title = 'Thảo Nguyên – Sâm Ngọc Linh', description = 'Sâm Ngọ
           <span></span><span></span><span></span>
         </button>
         <nav id="primary-navigation" class="primary-navigation" aria-label="Điều hướng chính">
-          <a href="#about">Giới thiệu</a>
-          <a href="#products">Sản phẩm</a>
-          <a href="#certificates">Nhật ký Ngọc Linh</a>
-          <a href="#contact">Liên hệ</a>
+          <a href="/#about">Giới thiệu</a>
+          <a href="/products/">Sản phẩm</a>
+          <a href="/#certificates">Nhật ký Ngọc Linh</a>
+          <a href="/#contact">Liên hệ</a>
         </nav>
       </div>
     </header>
@@ -81,6 +81,9 @@ const { title = 'Thảo Nguyên – Sâm Ngọc Linh', description = 'Sâm Ngọ
   .category-card h3 { margin: 12px 0; font-size: clamp(1rem, 1.8vw, 1.25rem); text-transform: uppercase; }
   .pill-link, .contact-button { display: inline-flex; justify-content: center; align-items: center; min-height: 44px; padding: 8px 34px; border: 0; border-radius: 999px; background: #076246; color: #fff; text-decoration: none; font-size: 1rem; }
   .product-card { padding: 16px; }
+  .product-card-link { display: block; color: inherit; text-decoration: none; }
+  .product-card-link:hover h2, .product-card-link:hover h3 { color: #076246; text-decoration: underline; }
+  .product-card h2 { min-height: 3em; margin: 8px 0 4px; font-size: clamp(1rem, 1.6vw, 1.2rem); }
   .product-card img { width: 100%; height: clamp(150px, 18vw, 220px); object-fit: contain; }
   .product-card h3 { min-height: 3em; margin: 8px 0 4px; font-size: clamp(1rem, 1.6vw, 1.2rem); }
   .product-card p { margin: 4px 0 12px; }
@@ -91,6 +94,22 @@ const { title = 'Thảo Nguyên – Sâm Ngọc Linh', description = 'Sâm Ngọ
   .contact-panel p { font-size: clamp(1rem, 2vw, 1.25rem); line-height: 1.8; }
   .contact-logo { width: min(100%, 260px); justify-self: center; }
   footer { padding: 22px; text-align: center; background: #103b29; }
+  .catalog-page { margin-top: 30px; }
+  .breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin: 0 12px 22px; font-size: .95rem; }
+  .breadcrumbs a { text-decoration: none; }
+  .breadcrumbs a:hover { color: #f0d467; }
+  .category-navigation { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 22px; padding: 14px 12px 22px; }
+  .category-navigation a { text-decoration: none; text-transform: uppercase; font-weight: 700; }
+  .category-navigation a:hover, .category-navigation a.active { color: #f0d467; }
+  .category-description { max-width: 760px; margin: 0 auto 26px; line-height: 1.7; }
+  .product-detail-hero { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(0, 1.2fr); align-items: center; gap: clamp(28px, 6vw, 72px); padding: clamp(12px, 2vw, 24px); }
+  .product-detail-hero > img { width: 100%; max-height: 460px; object-fit: contain; background: #fff; }
+  .product-category { margin: 0; font-size: clamp(1.2rem, 2.5vw, 1.8rem); }
+  .product-detail h1 { margin: 8px 0; font-size: clamp(1.7rem, 4vw, 2.7rem); }
+  .product-size { margin: 8px 0 24px; font-size: clamp(1.2rem, 2.5vw, 1.8rem); }
+  .product-description, .product-detail-copy { line-height: 1.7; }
+  .product-detail-copy { margin: 28px 0 0; padding-top: 20px; border-top: 1px solid #ffffff77; }
+  .product-detail-copy h2 { margin-top: 0; }
   @media (max-width: 992px) {
     .header-inner { min-height: 78px; }
     .brand { flex-basis: 230px; }
@@ -113,5 +132,8 @@ const { title = 'Thảo Nguyên – Sâm Ngọc Linh', description = 'Sâm Ngọ
     .product-card img { height: 210px; }
     .certificate-placeholder { min-height: 120px; }
     .contact-panel { grid-template-columns: 1fr; }
+    .category-navigation { flex-direction: column; align-items: flex-start; }
+    .product-detail-hero { grid-template-columns: 1fr; }
+    .product-detail-hero > img { max-height: 320px; }
   }
 </style>

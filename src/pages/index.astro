@@ -18,7 +18,7 @@ import { categories, certificates, products } from '../data/catalog';
           <article class="category-card">
             <img src={category.image} alt={category.alt} loading="lazy" />
             <h3>{category.title}</h3>
-            <a class="pill-link" href="#products" aria-label={`Xem sản phẩm ${category.title}`}>Xem thêm</a>
+            <a class="pill-link" href={`/products/categories/${category.slug}/`} aria-label={`Xem sản phẩm ${category.title}`}>Xem thêm</a>
           </article>
         ))}
       </div>
@@ -30,10 +30,10 @@ import { categories, certificates, products } from '../data/catalog';
         {products.map((product) => (
           <article class="product-card">
             <img src={product.image} alt={product.alt} loading="lazy" />
-            <p>{product.category}</p>
+            <p>{categories.find((category) => category.slug === product.category)?.title}</p>
             <h3>{product.title}</h3>
             <p>{product.summary}</p>
-            <a class="pill-link" href="#contact" aria-label={`Liên hệ về ${product.title}`}>Liên hệ</a>
+            <a class="pill-link" href={`/products/${product.slug}/`} aria-label={`Xem chi tiết ${product.title}`}>Xem thêm</a>
           </article>
         ))}
       </div>

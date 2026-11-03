@@ -1,0 +1,76 @@
+# Replace this value after creating the site in Decap Turbo. See docs/deployment/decap-cms.md.
+backend:
+  name: turbo-github
+  turbo_site_id: REPLACE_WITH_DECAP_TURBO_SITE_ID
+  branch: main
+
+media_folder: public/assets/images/uploads
+public_folder: /assets/images/uploads
+slug:
+  encoding: ascii
+  clean_accents: true
+  sanitize_replacement: "-"
+
+collections:
+  - name: categories
+    label: Product categories
+    label_singular: Product category
+    folder: src/data/categories
+    create: true
+    extension: json
+    format: json
+    slug: "{{slug}}"
+    sortable_fields:
+      - field: order
+        label: Display order
+        default_sort: asc
+      - title
+    view_filters:
+      - label: Archived
+        field: archived
+        pattern: true
+    fields:
+      - { label: Name, name: title, widget: string }
+      - { label: Category image, name: image, widget: image }
+      - { label: Image description, name: alt, widget: string }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Display order, name: order, widget: number, value_type: int, min: 0, default: 0 }
+      - { label: Archived, name: archived, widget: boolean, default: false, required: false }
+
+  - name: products
+    label: Products
+    label_singular: Product
+    folder: src/data/products
+    create: true
+    extension: json
+    format: json
+    slug: "{{slug}}"
+    sortable_fields:
+      - field: order
+        label: Display order
+        default_sort: asc
+      - title
+    view_filters:
+      - label: Archived
+        field: archived
+        pattern: true
+    fields:
+      - { label: Name, name: title, widget: string }
+      - label: Primary category
+        name: category
+        widget: relation
+        collection: categories
+        search_fields: [title]
+        display_fields: [title]
+        value_field: "{{slug}}"
+      - { label: Product image, name: image, widget: image }
+      - { label: Image description, name: alt, widget: string }
+      - { label: Package size or card summary, name: summary, widget: string }
+      - { label: Description, name: description, widget: text, required: false }
+      - { label: Product information, name: product_info, widget: markdown, required: false }
+      - { label: Benefits, name: benefits, widget: list, required: false }
+      - { label: Recommended users, name: recommended_users, widget: markdown, required: false }
+      - { label: Directions, name: directions, widget: markdown, required: false }
+      - { label: Usage notes, name: usage_notes, widget: markdown, required: false }
+      - { label: Display order, name: order, widget: number, value_type: int, min: 0, default: 0 }
+      - { label: Archived, name: archived, widget: boolean, default: false, required: false }

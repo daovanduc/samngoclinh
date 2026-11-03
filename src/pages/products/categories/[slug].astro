@@ -1,0 +1,39 @@
+---
+import SiteLayout from '../../../layouts/SiteLayout.astro';
+import { categories, productsForCategory } from '../../../data/catalog';
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { slug: category.slug }, props: { category } }));
+}
+
+const { category } = Astro.props;
+const categoryProducts = productsForCategory(category.slug);
+---
+<SiteLayout title={`${category.title} | Thảo Nguyên`} description={category.description || `Sản phẩm thuộc danh mục ${category.title}.`}>
+  <main class="page-shell catalog-page">
+    <nav class="breadcrumbs" aria-label="Đường dẫn">
+      <a href="/">Trang chủ</a><span aria-hidden="true">›</span><a href="/products/">Sản phẩm</a><span aria-hidden="true">›</span><span>{category.title}</span>
+    </nav>
+    <nav class="category-navigation" aria-label="Danh mục sản phẩm">
+      <a href="/products/">Tất cả sản phẩm</a>
+      {categories.map((item) => <a class:list={{ active: item.slug === category.slug }} href={`/products/categories/${item.slug}/`}>{item.title}</a>)}
+    </nav>
+    <section class="content-section" aria-labelledby="category-title">
+      <h1 class="section-title" id="category-title">{category.title}</h1>
+      {category.description && <p class="category-description">{category.description}</p>}
+      <div class="product-grid">
+        {categoryProducts.map((product) => (
+          <article class="product-card">
+            <a class="product-card-link" href={`/products/${product.slug}/`} aria-label={product.title}>
+              <img src={product.image} alt={product.alt} loading="lazy" />
+              <p>{category.title}</p>
+              <h2>{product.title}</h2>
+              <p>{product.summary}</p>
+            </a>
+            <a class="pill-link" href={`/products/${product.slug}/`}>Xem thêm</a>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+</SiteLayout>
