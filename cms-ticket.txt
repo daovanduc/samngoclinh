@@ -1,0 +1,86 @@
+## Title
+Implement a Customizable Website Page Builder for the Sâm Ngọc Linh Website
+
+## Description
+Enhance the existing static Sâm Ngọc Linh website by introducing a customizable page builder that allows administrators to manage page layouts and content through a visual editing interface without modifying the source code.
+
+Administrators should be able to add multiple content frames to a page, resize and reposition individual frames, edit the text within each frame, and save their changes. The saved page configuration must be persisted and rendered consistently for all website visitors.
+
+The solution should minimize unnecessary changes to the existing website and evaluate whether a backend, database, or external CMS is required to support the new functionality.
+
+## Functional Requirements
+
+### 1. Visual Page Editor
+- Provide an administrative interface for editing website pages.
+- Allow administrators to add and remove content frames.
+- Allow administrators to select individual frames for editing.
+- Support resizing and repositioning frames within a page.
+- Allow administrators to edit text content within each frame.
+- Support multiple frames on a single page.
+- Provide a visual representation of the page while editing.
+
+### 2. Page Configuration and Persistence
+- Persist frame content, position, dimensions, and ordering.
+- Persist page layout configurations so that changes are not lost when the editor is closed or the page is refreshed.
+- Load the saved configuration when an administrator reopens a page for editing.
+- Ensure that saved configurations are available to all website visitors rather than being stored only in the administrator's browser.
+- Handle loading and saving errors appropriately.
+
+### 3. Public Website Rendering
+- Render the saved page configuration on the public-facing website.
+- Display all configured frames with their saved content, positions, dimensions, and ordering.
+- Ensure that changes made by an administrator are reflected on the public website after being saved or published, according to the chosen publishing workflow.
+- Preserve the existing website's functionality and content where applicable.
+
+### 4. Administration and Access Control
+- Restrict page editing and configuration management to authorized administrators.
+- Prevent unauthorized visitors from modifying or saving page configurations.
+- Keep the public-facing website accessible without requiring visitors to log in.
+
+### 5. Responsive Layout
+- Evaluate how customized layouts should behave across desktop, tablet, and mobile devices.
+- Ensure that the rendered website remains usable on supported screen sizes.
+- Define appropriate layout and resizing behavior for different viewport sizes.
+
+## Technical Considerations
+- Review the existing static website architecture before proposing implementation changes.
+- Evaluate whether the existing frontend can be retained.
+- Compare the feasibility of using a headless CMS or external persistence service against implementing a custom backend and database.
+- Define a suitable data model for pages and their content frames.
+- Ensure that page configuration data can be validated before rendering.
+- Consider authentication, authorization, data integrity, and failure handling.
+- Avoid introducing unnecessary architectural complexity.
+
+## Acceptance Criteria
+1. An authorized administrator can access the page editor.
+2. An administrator can add multiple frames to a page.
+3. An administrator can resize and reposition each frame.
+4. An administrator can edit and save text content within individual frames.
+5. Saved content and layout configurations persist across browser refreshes and subsequent editing sessions.
+6. Public visitors can view the saved page layout without authentication.
+7. Changes are reflected on the public website according to the defined save/publish workflow.
+8. Unauthorized users cannot modify page configurations.
+9. The page renders correctly on the agreed supported screen sizes.
+10. Existing website functionality remains operational.
+11. The implementation approach, including persistence and backend requirements, is documented and justified.
+
+## Out of Scope
+- E-commerce functionality, including shopping carts and payment processing.
+- Product inventory and order management.
+- Multi-tenant website creation.
+- Advanced drag-and-drop styling capabilities beyond the initial requirements.
+- Complex version control and collaborative editing, unless identified as necessary during technical analysis.
+
+## Expected Deliverables
+- Analysis of the existing website architecture.
+- Recommended implementation approach and architecture.
+- Proposed page and frame data model.
+- Implementation plan with task breakdown and dependencies.
+- Working page editor and public page renderer.
+- Automated tests covering the core editing, persistence, access-control, and rendering workflows.
+- Technical documentation describing configuration storage and deployment.
+
+## Implementation Approach
+Start by analyzing the existing project and identifying the minimum architectural changes required to support a persistent, customizable page builder.
+
+Before implementing the solution, document the proposed architecture, persistence mechanism, authentication approach, and responsive layout strategy. Prefer a solution that reuses the existing frontend and avoids introducing a custom backend unless the requirements justify it.
