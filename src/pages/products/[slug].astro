@@ -1,0 +1,35 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { categories, products } from '../../data/catalog';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+
+const { product } = Astro.props;
+const category = categories.find((item) => item.slug === product.category)!;
+---
+<SiteLayout title={`${product.title} | Thảo Nguyên`} description={product.summary}>
+  <main class="page-shell catalog-page">
+    <nav class="breadcrumbs" aria-label="Đường dẫn">
+      <a href="/">Trang chủ</a><span aria-hidden="true">›</span><a href="/products/">Sản phẩm</a><span aria-hidden="true">›</span><a href={`/products/categories/${category.slug}/`}>{category.title}</a><span aria-hidden="true">›</span><span>{product.title}</span>
+    </nav>
+    <article class="content-section product-detail">
+      <div class="product-detail-hero">
+        <img src={product.image} alt={product.alt} />
+        <div>
+          <p class="product-category">{category.title}</p>
+          <h1>{product.title}</h1>
+          <p class="product-size">{product.summary}</p>
+          {product.description && <p class="product-description">{product.description}</p>}
+          <a class="pill-link contact-button" href="tel:+84961851818">Liên hệ</a>
+        </div>
+      </div>
+      {product.product_info && <section class="product-detail-copy"><h2>Thông tin sản phẩm</h2><p>{product.product_info}</p></section>}
+      {product.benefits?.length > 0 && <section class="product-detail-copy"><h2>Công dụng</h2><ul>{product.benefits.map((benefit: string) => <li>{benefit}</li>)}</ul></section>}
+      {product.recommended_users && <section class="product-detail-copy"><h2>Khuyên dùng</h2><p>{product.recommended_users}</p></section>}
+      {product.directions && <section class="product-detail-copy"><h2>Cách dùng</h2><p>{product.directions}</p></section>}
+      {product.usage_notes && <section class="product-detail-copy"><h2>Lưu ý khi sử dụng</h2><p>{product.usage_notes}</p></section>}
+    </article>
+  </main>
+</SiteLayout>

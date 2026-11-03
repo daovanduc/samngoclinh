@@ -1,19 +1,55 @@
-// Representative launch fixtures. Replace these copy and image associations
-// with owner-verified product records when the CMS content ticket is delivered.
-export const categories = [
-  { title: 'Sâm Ngọc Linh', image: '/assets/images/product1.jpg', alt: 'Cây sâm Ngọc Linh' },
-  { title: 'Hồng Đẳng Sâm', image: '/assets/images/product4.jpg', alt: 'Củ Hồng Đẳng Sâm' },
-  { title: 'Lan Kim Tuyến', image: '/assets/images/product5.jpg', alt: 'Lá Lan Kim Tuyến' },
-];
+type CategoryRecord = {
+  title: string;
+  image: string;
+  alt: string;
+  description?: string;
+  order: number;
+  archived?: boolean;
+};
 
-export const products = [
-  { title: 'Sâm Ngọc Linh ngâm mật ong 500ml', category: 'Sâm Ngọc Linh', image: '/assets/images/product2.jpg', alt: 'Hũ sâm Ngọc Linh ngâm mật ong', summary: 'Hũ thủy tinh 500ml' },
-  { title: 'Sâm Ngọc Linh ngâm rượu 500ml', category: 'Sâm Ngọc Linh', image: '/assets/images/product1.jpg', alt: 'Sâm Ngọc Linh ngâm rượu', summary: 'Hũ thủy tinh 500ml' },
-  { title: 'Hồng Đẳng Sâm ngâm mật ong 500ml', category: 'Hồng Đẳng Sâm', image: '/assets/images/product3.jpg', alt: 'Hồng Đẳng Sâm ngâm mật ong', summary: 'Hũ thủy tinh 500ml' },
-  { title: 'Hồng Đẳng Sâm ngâm rượu 500ml', category: 'Hồng Đẳng Sâm', image: '/assets/images/product4.jpg', alt: 'Hồng Đẳng Sâm ngâm rượu', summary: 'Hũ thủy tinh 500ml' },
-  { title: 'Lan Kim Tuyến 100g', category: 'Lan Kim Tuyến', image: '/assets/images/product5.jpg', alt: 'Lan Kim Tuyến', summary: 'Sản phẩm thảo dược' },
-  { title: 'Trầm Hương tự nhiên', category: 'Sản phẩm khác', image: '/assets/images/product6.jpg', alt: 'Trầm Hương tự nhiên', summary: 'Sản phẩm thảo dược' },
-];
+type ProductRecord = {
+  title: string;
+  category: string;
+  image: string;
+  alt: string;
+  summary: string;
+  description?: string;
+  product_info?: string;
+  benefits?: string[];
+  recommended_users?: string;
+  directions?: string;
+  usage_notes?: string;
+  order: number;
+  archived?: boolean;
+};
+
+type CatalogEntry<T> = T & { slug: string };
+
+const recordsFrom = <T>(files: Record<string, unknown>): CatalogEntry<T>[] =>
+  Object.entries(files).map(([path, value]) => ({
+    ...(value as T),
+    slug: path.split('/').at(-1)!.replace(/\.json$/, ''),
+  }));
+
+const categoryFiles = import.meta.glob('./categories/*.json', {
+  eager: true,
+  import: 'default',
+});
+const productFiles = import.meta.glob('./products/*.json', {
+  eager: true,
+  import: 'default',
+});
+
+export const categories = recordsFrom<CategoryRecord>(categoryFiles)
+  .filter((category) => !category.archived)
+  .sort((a, b) => a.order - b.order);
+
+export const products = recordsFrom<ProductRecord>(productFiles)
+  .filter((product) => !product.archived && categories.some((category) => category.slug === product.category))
+  .sort((a, b) => a.order - b.order);
+
+export const productsForCategory = (slug: string) =>
+  products.filter((product) => product.category === slug);
 
 export const certificates = [
   'Vị trí chứng nhận 1',
