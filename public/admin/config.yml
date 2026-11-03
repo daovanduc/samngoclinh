@@ -74,3 +74,33 @@ collections:
       - { label: Usage notes, name: usage_notes, widget: markdown, required: false }
       - { label: Display order, name: order, widget: number, value_type: int, min: 0, default: 0 }
       - { label: Archived, name: archived, widget: boolean, default: false, required: false }
+
+  - name: news
+    label: Nhật ký Ngọc Linh
+    label_singular: Bài viết
+    folder: src/data/news
+    create: true
+    extension: json
+    format: json
+    slug: "{{slug}}"
+    sortable_fields:
+      - field: order
+        label: Display order
+        default_sort: asc
+      - field: date
+        label: Publication date
+        default_sort: descending
+      - title
+    view_filters:
+      - label: Archived
+        field: archived
+        pattern: true
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Slug, name: slug, widget: string, hint: "Use a unique URL-friendly value, for example hanh-trinh-ngoc-linh." }
+      - { label: Publication date, name: date, widget: datetime, time_format: false, format: "YYYY-MM-DD", date_format: "DD/MM/YYYY" }
+      - { label: Summary, name: summary, widget: text }
+      - { label: Article body, name: body, widget: text }
+      - { label: Cover image, name: image, widget: image, required: false }
+      - { label: Display order, name: order, widget: number, value_type: int, min: 0, default: 0 }
+      - { label: Archived, name: archived, widget: boolean, default: false, required: false }
