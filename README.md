@@ -6,21 +6,20 @@ This repository builds a static product catalog and news site with Astro. The si
 
 Use Node.js 22.23.4 and npm. That exact build version is recorded in `.node-version`; some installed dependencies require a newer Node version than the package's minimum engine declaration.
 
-On Windows with fnm, select the pinned version before installing packages:
+On this Windows machine, the pinned Node installation is already available. Call its executables directly so another system Node on `PATH` cannot take precedence:
 
 ```powershell
-fnm install 22.23.4
-fnm use 22.23.4
-node --version
+$nodeInstallationPath = 'C:\Users\Admin\AppData\Roaming\fnm\node-versions\v22.23.4\installation'
+& (Join-Path $nodeInstallationPath 'node.exe') --version
 ```
 
-The last command should print `v22.23.4`. If fnm is not installed, install Node.js 22.23.4 with the official Windows installer and open a new PowerShell window.
+The command should print `v22.23.4`. Use the matching `npm.cmd` for installs and scripts:
 
 In PowerShell, open the repository folder and run:
 
 ```powershell
-npm ci
-npm run dev
+& (Join-Path $nodeInstallationPath 'npm.cmd') ci
+& (Join-Path $nodeInstallationPath 'npm.cmd') run dev
 ```
 
 Open <http://localhost:4321> in your browser. Stop the local server with `Ctrl+C` in the PowerShell window.
@@ -30,8 +29,9 @@ If you do not have the project folder yet:
 ```powershell
 git clone --branch codex/implement-13 --single-branch https://github.com/daovanduc/samngoclinh.git
 cd samngoclinh
-npm ci
-npm run dev
+$nodeInstallationPath = 'C:\Users\Admin\AppData\Roaming\fnm\node-versions\v22.23.4\installation'
+& (Join-Path $nodeInstallationPath 'npm.cmd') ci
+& (Join-Path $nodeInstallationPath 'npm.cmd') run dev
 ```
 
 `npm ci` requires the `package-lock.json` in the implementation branch. If npm reports that the lockfile is missing, check that you are in the `samngoclinh` folder on `codex/implement-13` before running it:
@@ -72,9 +72,9 @@ Until the CMS is configured, content can be edited directly in the JSON files ab
 ## Build and preview
 
 ```powershell
-npm run validate
-npm run build
-npm run preview
+& (Join-Path $nodeInstallationPath 'npm.cmd') run validate
+& (Join-Path $nodeInstallationPath 'npm.cmd') run build
+& (Join-Path $nodeInstallationPath 'npm.cmd') run preview
 ```
 
 `npm run build` validates content, checks Astro files, and generates the static site into `dist/`. `npm run preview` serves the generated build locally; run the build first. The GitHub Actions workflow also runs the build and browser smoke suite on pull requests.
@@ -82,8 +82,8 @@ npm run preview
 To run the browser suite locally, install Chromium once and run:
 
 ```powershell
-npx playwright install chromium
-npm test
+& (Join-Path $nodeInstallationPath 'npx.cmd') playwright install chromium
+& (Join-Path $nodeInstallationPath 'npm.cmd') test
 ```
 
 ## Publishing status
