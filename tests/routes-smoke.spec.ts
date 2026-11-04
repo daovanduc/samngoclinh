@@ -1,0 +1,26 @@
+import { expect, test } from '@playwright/test';
+
+for (const viewport of [
+  { name: 'desktop', width: 1280, height: 900 },
+  { name: 'tablet', width: 800, height: 1024 },
+  { name: 'phone', width: 390, height: 844 },
+]) {
+  test(`all generated content routes and primary navigation work on ${viewport.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    for (const route of ['/', '/products/', '/products/categories/sam-ngoc-linh/', '/products/sam-ngoc-linh-ngam-mat-ong-500ml/', '/news/', '/news/hanh-trinh-sam-ngoc-linh/']) {
+      const response = await page.goto(route);
+      expect(response?.status(), `route should render: ${route}`).toBe(200);
+      await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toBeVisible();
+      await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+      expect(await page.locator('body').evaluate((el) => el.scrollWidth)).toBeLessThanOrEqual(viewport.width);
+      const internalLinks = await page.locator('a[href^="/"]').evaluateAll((links) =>
+        [...new Set(links.map((link) => (link as HTMLAnchorElement).getAttribute('href')!).filter((href) => !href.startsWith('/admin')))],
+      );
+      for (const href of internalLinks) {
+        const linkResponse = await page.request.get(new URL(href, page.url()).toString());
+        expect(linkResponse.status(), `internal link should resolve from ${route}: ${href}`).toBe(200);
+      }
+    }
+  });
+}
+

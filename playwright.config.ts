@@ -5,6 +5,7 @@ process.env.PLAYWRIGHT_BROWSERS_PATH ??= path.join(process.cwd(), '.playwright-b
 
 export default defineConfig({
   testDir: './tests',
+  testMatch: '**/*.spec.ts',
   use: { baseURL: 'http://127.0.0.1:4321', browserName: 'chromium' },
   webServer: {
     command: 'npm run preview -- --host 127.0.0.1',

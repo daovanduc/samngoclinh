@@ -1,8 +1,10 @@
 # Replace this value after creating the site in Decap Turbo. See docs/deployment/decap-cms.md.
+site_url: https://samngoclinh.pages.dev
+
 backend:
   name: turbo-github
   turbo_site_id: REPLACE_WITH_DECAP_TURBO_SITE_ID
-  branch: main
+  branch: prototype/designed-section-editor
 
 media_folder: public/assets/images/uploads
 public_folder: /assets/images/uploads
@@ -148,3 +150,4 @@ collections:
                 fields:
                   - { label: Section title, name: title, widget: string }
                   - { label: Store and contact details, name: body, widget: text }
+

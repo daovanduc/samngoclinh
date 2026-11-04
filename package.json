@@ -1,12 +1,16 @@
 {
   "name": "sam-ngoc-linh-site",
   "type": "module",
-  "engines": { "node": ">=20.19.0" },
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build",
+    "build": "npm run validate && astro check && astro build",
     "preview": "astro preview",
-    "test": "playwright test"
+    "test": "npm run test:content && playwright test",
+    "validate": "node scripts/validate-content.js",
+    "test:content": "node --test tests/content-validation.test.js"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
