@@ -1,9 +1,9 @@
 {
   "sections": [
     { "type": "hero", "title": "Tinh hoa từ núi rừng Ngọc Linh", "body": "Thảo Nguyên – Sâm Ngọc Linh" },
-    { "type": "categories", "title": "Danh mục sản phẩm", "body": "" },
-    { "type": "products", "title": "Sản phẩm nổi bật", "body": "" },
-    { "type": "certificates", "title": "Chứng nhận và cam kết của Thảo Nguyên", "body": "" },
+    { "type": "categories", "title": "Danh mục sản phẩm", "body": "Khám phá những sản vật từ núi rừng Ngọc Linh." },
+    { "type": "products", "title": "Sản phẩm nổi bật", "body": "Chọn một sản phẩm để xem thông tin chi tiết." },
+    { "type": "certificates", "title": "Chứng nhận và cam kết của Thảo Nguyên", "body": "Thông tin chứng nhận và cam kết chất lượng của Thảo Nguyên." },
     { "type": "contact", "title": "Thông tin cửa hàng & liên hệ", "body": "Thảo Nguyên – Sâm Ngọc Linh\nĐịa chỉ: Tầng 1, Tòa nhà The ZEI Plaza\nSố 08 Lê Đức Thọ, Nam Từ Liêm, Hà Nội\nHOTLINE: 0961 851 818" }
   ]
 }
