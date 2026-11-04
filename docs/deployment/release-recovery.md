@@ -2,7 +2,7 @@
 
 ## Before publishing
 
-Content is validated as part of `npm run build`: required category, product, and article fields, unique URL slugs within each collection, valid product-to-category references, and supported homepage sections must pass before Astro diagnostics and static generation. GitHub Actions reports both **Content validation and production build** and **Generated-site browser smoke** on pull requests and pushes to `main`. Configure repository branch protection to require these two status checks for ordinary code changes. Cloudflare Pages must use `npm run build` and `dist`; its own build then rejects invalid CMS commits before publishing.
+Content is validated as part of `npm run build`: required category, product, and article fields, unique URL slugs within each collection, valid product-to-category references, and supported homepage sections must pass before Astro diagnostics and static generation. GitHub Actions reports both **Content validation and production build** and **Generated-site browser smoke** on pull requests and pushes to the repository default branch, currently `prototype/designed-section-editor`. Keep this branch name synchronized with GitHub if the default branch changes. Configure repository branch protection to require these two status checks for ordinary code changes. Cloudflare Pages must use `npm run build` and `dist`; its own build then rejects invalid CMS commits before publishing.
 
 ## Failed deployment email (owner setup)
 
