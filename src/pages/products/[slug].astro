@@ -1,6 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import { categories, products } from '../../data/catalog';
+import { categories, products, productsForCategory } from '../../data/catalog';
 
 export function getStaticPaths() {
   return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
@@ -8,8 +8,11 @@ export function getStaticPaths() {
 
 const { product } = Astro.props;
 const category = categories.find((item) => item.slug === product.category)!;
+const relatedProducts = productsForCategory(product.category)
+  .filter((item) => item.slug !== product.slug)
+  .slice(0, 3);
 ---
-<SiteLayout title={`${product.title} | Thảo Nguyên`} description={product.summary}>
+<SiteLayout title={`${product.title} | Thảo Nguyên`} description={product.description || `${product.title} – ${product.summary}`}>
   <main class="page-shell catalog-page">
     <nav class="breadcrumbs" aria-label="Đường dẫn">
       <a href="/">Trang chủ</a><span aria-hidden="true">›</span><a href="/products/">Sản phẩm</a><span aria-hidden="true">›</span><a href={`/products/categories/${category.slug}/`}>{category.title}</a><span aria-hidden="true">›</span><span>{product.title}</span>
@@ -25,11 +28,26 @@ const category = categories.find((item) => item.slug === product.category)!;
           <a class="pill-link contact-button" href="tel:+84961851818">Liên hệ</a>
         </div>
       </div>
-      {product.product_info && <section class="product-detail-copy"><h2>Thông tin sản phẩm</h2><p>{product.product_info}</p></section>}
+      {product.product_info && <section class="product-detail-copy"><h2>Thông tin sản phẩm</h2><div class="product-detail-text">{product.product_info}</div></section>}
       {product.benefits?.length > 0 && <section class="product-detail-copy"><h2>Công dụng</h2><ul>{product.benefits.map((benefit: string) => <li>{benefit}</li>)}</ul></section>}
-      {product.recommended_users && <section class="product-detail-copy"><h2>Khuyên dùng</h2><p>{product.recommended_users}</p></section>}
-      {product.directions && <section class="product-detail-copy"><h2>Cách dùng</h2><p>{product.directions}</p></section>}
-      {product.usage_notes && <section class="product-detail-copy"><h2>Lưu ý khi sử dụng</h2><p>{product.usage_notes}</p></section>}
+      {product.recommended_users && <section class="product-detail-copy"><h2>Đối tượng sử dụng</h2><div class="product-detail-text">{product.recommended_users}</div></section>}
+      {product.directions && <section class="product-detail-copy"><h2>Hướng dẫn sử dụng</h2><div class="product-detail-text">{product.directions}</div></section>}
+      {product.usage_notes && <section class="product-detail-copy"><h2>Lưu ý khi sử dụng</h2><div class="product-detail-text">{product.usage_notes}</div></section>}
     </article>
+    {relatedProducts.length > 0 && <section class="content-section related-products" aria-labelledby="related-products-title">
+      <h2 class="section-title" id="related-products-title">Sản phẩm cùng danh mục</h2>
+      <div class="product-grid">
+        {relatedProducts.map((relatedProduct) => (
+          <article class="product-card">
+            <a class="product-card-link" href={`/products/${relatedProduct.slug}/`} aria-label={relatedProduct.title}>
+              <img src={relatedProduct.image} alt={relatedProduct.alt} loading="lazy" />
+              <h3>{relatedProduct.title}</h3>
+              <p>{relatedProduct.summary}</p>
+            </a>
+            <a class="pill-link" href={`/products/${relatedProduct.slug}/`}>Xem sản phẩm</a>
+          </article>
+        ))}
+      </div>
+    </section>}
   </main>
 </SiteLayout>
