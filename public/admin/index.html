@@ -9,3 +9,23 @@
     <script src="https://cdn.jsdelivr.net/npm/decap-cms@^3.17.0/dist/decap-cms.js"></script>
   </body>
 </html>
+<script>
+      window.addEventListener('load', function () {
+        if (!window.CMS || !window.createClass || !window.h) return;
+        var Preview = window.createClass({
+          render: function () {
+            var data = this.props.entry.getIn(['data', 'sections']);
+            var sections = data && data.toArray ? data.toArray() : [];
+            return window.h('main', { className: 'section-preview' }, sections.map(function (section, index) {
+              var type = section.get('type');
+              var title = section.get('title') || '';
+              var body = section.get('body') || '';
+              return window.h('section', { key: index, style: { padding: '24px', margin: '12px', border: '1px solid #dbe2dc' } }, [
+                window.h('small', null, type), window.h(type === 'hero' ? 'h1' : 'h2', null, title), window.h('p', null, body)
+              ]);
+            }));
+          }
+        });
+        window.CMS.registerPreviewTemplate('listing-page', Preview);
+      });
+    </script>

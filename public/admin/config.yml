@@ -104,3 +104,47 @@ collections:
       - { label: Cover image, name: image, widget: image, required: false }
       - { label: Display order, name: order, widget: number, value_type: int, min: 0, default: 0 }
       - { label: Archived, name: archived, widget: boolean, default: false, required: false }
+  - name: listing-page
+    label: Product listing page
+    files:
+      - name: products-page
+        label: Product listing sections
+        file: src/data/pages/products.json
+        preview_path: /
+        fields:
+          - label: Page sections
+            name: sections
+            widget: list
+            label_singular: section
+            summary: '{{fields.title}} · {{type}}'
+            types:
+              - label: Hero
+                name: hero
+                widget: object
+                fields:
+                  - { label: Section title, name: title, widget: string }
+                  - { label: Supporting text, name: body, widget: text }
+              - label: Category cards
+                name: categories
+                widget: object
+                fields:
+                  - { label: Section title, name: title, widget: string }
+                  - { label: Supporting text, name: body, widget: text, required: false }
+              - label: All products
+                name: products
+                widget: object
+                fields:
+                  - { label: Section title, name: title, widget: string }
+                  - { label: Supporting text, name: body, widget: text, required: false }
+              - label: Certificates
+                name: certificates
+                widget: object
+                fields:
+                  - { label: Section title, name: title, widget: string }
+                  - { label: Supporting text, name: body, widget: text, required: false }
+              - label: Store & contact
+                name: contact
+                widget: object
+                fields:
+                  - { label: Section title, name: title, widget: string }
+                  - { label: Store and contact details, name: body, widget: text }

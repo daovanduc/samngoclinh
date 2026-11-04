@@ -1,58 +1,19 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
 import { categories, certificates, products } from '../data/catalog';
+import page from '../data/pages/products.json';
+const known = new Set(['hero', 'categories', 'products', 'certificates', 'contact']);
+const sections = page.sections.filter((section) => known.has(section.type));
 ---
 <SiteLayout title="Thảo Nguyên – Sâm Ngọc Linh | Sản phẩm" description="Khám phá các sản phẩm Sâm Ngọc Linh và dược liệu quý Thảo Nguyên.">
   <main class="page-shell">
-    <section class="hero" id="about" aria-labelledby="hero-title">
-      <div>
-        <h1 id="hero-title">Tinh hoa từ núi rừng Ngọc Linh</h1>
-        <p>Thảo Nguyên – Sâm Ngọc Linh</p>
-      </div>
-    </section>
-
-    <section class="content-section" aria-labelledby="categories-title">
-      <h2 class="section-title" id="categories-title">Danh mục sản phẩm</h2>
-      <div class="category-grid">
-        {categories.map((category) => (
-          <article class="category-card">
-            <img src={category.image} alt={category.alt} loading="lazy" />
-            <h3>{category.title}</h3>
-            <a class="pill-link" href={`/products/categories/${category.slug}/`} aria-label={`Xem sản phẩm ${category.title}`}>Xem thêm</a>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section class="content-section" id="products" aria-labelledby="products-title">
-      <h2 class="section-title" id="products-title">Sản phẩm nổi bật</h2>
-      <div class="product-grid">
-        {products.map((product) => (
-          <article class="product-card">
-            <img src={product.image} alt={product.alt} loading="lazy" />
-            <p>{categories.find((category) => category.slug === product.category)?.title}</p>
-            <h3>{product.title}</h3>
-            <p>{product.summary}</p>
-            <a class="pill-link" href={`/products/${product.slug}/`} aria-label={`Xem chi tiết ${product.title}`}>Xem thêm</a>
-          </article>
-        ))}
-      </div>
-    </section>
-
-    <section class="content-section" id="certificates" aria-labelledby="certificates-title">
-      <h2 class="section-title" id="certificates-title">Chứng nhận và cam kết của Thảo Nguyên</h2>
-      <div class="certificate-grid">
-        {certificates.map((item) => <div class="certificate-placeholder">{item}<br />Hình ảnh sẽ được cập nhật</div>)}
-      </div>
-    </section>
-
-    <section class="content-section contact-panel" id="contact" aria-labelledby="contact-title">
-      <div>
-        <h2 id="contact-title">Thông tin cửa hàng &amp; liên hệ</h2>
-        <p>Thảo Nguyên – Sâm Ngọc Linh<br />Địa chỉ: Tầng 1, Tòa nhà The ZEI Plaza<br />Số 08 Lê Đức Thọ, Nam Từ Liêm, Hà Nội<br />HOTLINE: <a href="tel:+84961851818">0961 851 818</a></p>
-      </div>
-      <img class="contact-logo" src="/assets/images/logo.png" alt="Thảo Nguyên – Sâm Ngọc Linh" loading="lazy" />
-    </section>
+    {sections.map((section) => <section data-page-section={section.type} class:list={[section.type === 'hero' ? 'hero' : 'content-section', section.type === 'contact' && 'contact-panel']} id={section.type === 'categories' ? 'categories' : section.type === 'products' || section.type === 'hero' ? (section.type === 'hero' ? 'about' : 'products') : section.type} aria-label={section.title}>
+      {section.type === 'hero' && <div><h1 id="hero-title">{section.title}</h1><p>{section.body}</p></div>}
+      {section.type === 'categories' && <><h2 class="section-title">{section.title}</h2><div class="category-grid">{categories.map((category) => <article class="category-card"><img src={category.image} alt={category.alt} loading="lazy"/><h3>{category.title}</h3><a class="pill-link" href={`/products/categories/${category.slug}/`} aria-label={`Xem sản phẩm ${category.title}`}>Xem thêm</a></article>)}</div></>}
+      {section.type === 'products' && <><h2 class="section-title">{section.title}</h2><div class="product-grid">{products.map((product) => <article class="product-card"><img src={product.image} alt={product.alt} loading="lazy"/><p>{categories.find((category) => category.slug === product.category)?.title}</p><h3>{product.title}</h3><p>{product.summary}</p><a class="pill-link" href={`/products/${product.slug}/`} aria-label={`Xem chi tiết ${product.title}`}>Xem thêm</a></article>)}</div></>}
+      {section.type === 'certificates' && <><h2 class="section-title">{section.title}</h2><div class="certificate-grid">{certificates.map((item) => <div class="certificate-placeholder">{item}<br/>Hình ảnh sẽ được cập nhật</div>)}</div></>}
+      {section.type === 'contact' && <><div><h2>{section.title}</h2><p>{section.body.split('\n').map((line) => <>{line}<br/></>)}</p></div><img class="contact-logo" src="/assets/images/logo.png" alt="Thảo Nguyên – Sâm Ngọc Linh" loading="lazy"/></>}
+    </section>)}
   </main>
   <footer>© Thảo Nguyên – Sâm Ngọc Linh</footer>
 </SiteLayout>
