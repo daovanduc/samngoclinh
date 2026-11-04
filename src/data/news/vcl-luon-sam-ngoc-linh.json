@@ -1,8 +1,8 @@
 {
   "order": 1,
-  "archived": true,
+  "archived": false,
   "title": "VCL luôn sâm ngọc linh",
-  "slug": "http://127.0.0.1:4322/admin/index.html#/collections/newsSam Ngoc Linh ",
+  "slug": "vcl-luon-sam-ngoc-linh",
   "date": "2026-11-05",
   "summary": "Sam ngoc linh real ",
   "body": "Sam ngoc linh real fake",
