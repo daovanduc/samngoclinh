@@ -7,11 +7,8 @@
   </head>
   <body>
     <script src="https://cdn.jsdelivr.net/npm/decap-cms@^3.17.0/dist/decap-cms.js"></script>
-  </body>
-</html>
-<script>
-      window.addEventListener('load', function () {
-        if (!window.CMS || !window.createClass || !window.h) return;
+    <script>
+      if (window.CMS && window.createClass && window.h) {
         var Preview = window.createClass({
           render: function () {
             var data = this.props.entry.getIn(['data', 'sections']);
@@ -27,6 +24,8 @@
           }
         });
         window.CMS.registerPreviewTemplate('products-page', Preview);
-      });
+      }
     </script>
+  </body>
+</html>
 
