@@ -98,7 +98,7 @@ for (const viewport of [
     await expect(page.locator('#products .product-card')).toHaveCount(6);
     const columns = await page.locator('.product-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
     expect(columns).toBe(viewport.columns);
-    await expect(page.locator('a[href^="tel:"]')).toBeVisible();
+    await expect(page.locator('.contact-panel')).toContainText('HOTLINE: 0961 851 818');
     const pageWidth = await page.locator('body').evaluate((el) => el.scrollWidth);
     expect(pageWidth).toBeLessThanOrEqual(viewport.width);
 

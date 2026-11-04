@@ -10,6 +10,12 @@ for (const viewport of [
     for (const route of ['/', '/products/', '/products/categories/sam-ngoc-linh/', '/products/sam-ngoc-linh-ngam-mat-ong-500ml/', '/news/', '/news/hanh-trinh-sam-ngoc-linh/']) {
       const response = await page.goto(route);
       expect(response?.status(), `route should render: ${route}`).toBe(200);
+      if (viewport.width <= 992) {
+        const menuToggle = page.getByRole('button', { name: /menu/i });
+        await expect(menuToggle).toHaveAttribute('aria-expanded', 'false');
+        await menuToggle.click();
+        await expect(menuToggle).toHaveAttribute('aria-expanded', 'true');
+      }
       await expect(page.getByRole('navigation', { name: 'Điều hướng chính' })).toBeVisible();
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
       expect(await page.locator('body').evaluate((el) => el.scrollWidth)).toBeLessThanOrEqual(viewport.width);
