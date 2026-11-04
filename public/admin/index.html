@@ -4,6 +4,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Quản lý nội dung | Thảo Nguyên</title>
+    <style>
+      .section-preview { max-width: 900px; margin: 20px auto; padding: 18px; background: #eef2ec; font-family: sans-serif; color: #fff; }
+      .section-preview section { margin: 0 0 13px; padding: 22px; border: 1px solid #ffffff52; border-radius: 12px; background: #14563f; }
+      .section-preview h1,.section-preview h2 { margin: 0 0 8px; }
+      .section-preview p { margin: 0; line-height: 1.6; white-space: pre-line; }
+      .section-preview .hero { min-height: 110px; display: flex; flex-direction: column; justify-content: end; background: linear-gradient(90deg,#0e3a29cf,#154a3480),url('/assets/images/hero-background111.jpg') center/cover; }
+      .preview-cards { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; margin-top: 14px; }
+      .preview-card { padding: 16px 10px; border-radius: 8px; background: white; color: #21523b; text-align: center; font-weight: 700; }
+      .preview-contact { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; align-items: center; }
+      @media(max-width:560px) { .preview-cards { grid-template-columns: repeat(2,minmax(0,1fr)); } .section-preview { padding: 10px; } }
+    </style>
   </head>
   <body>
     <script src="https://cdn.jsdelivr.net/npm/decap-cms@^3.17.0/dist/decap-cms.js"></script>
@@ -17,9 +28,12 @@
               var type = section.get('type');
               var title = section.get('title') || '';
               var body = section.get('body') || '';
-              return window.h('section', { key: index, style: { padding: '24px', margin: '12px', border: '1px solid #dbe2dc' } }, [
-                window.h('small', null, type), window.h(type === 'hero' ? 'h1' : 'h2', null, title), window.h('p', null, body)
-              ]);
+              var children = [window.h(type === 'hero' ? 'h1' : 'h2', null, title)];
+              if (body) children.push(window.h('p', { className: 'section-copy' }, body));
+              if (type === 'categories') children.push(window.h('div', { className: 'preview-cards' }, ['Danh mục 1', 'Danh mục 2', 'Danh mục 3'].map(function (label) { return window.h('div', { className: 'preview-card', key: label }, label); })));
+              if (type === 'products') children.push(window.h('div', { className: 'preview-cards' }, ['Sản phẩm 1', 'Sản phẩm 2', 'Sản phẩm 3'].map(function (label) { return window.h('div', { className: 'preview-card', key: label }, label); })));
+              if (type === 'certificates') children.push(window.h('div', { className: 'preview-cards' }, ['Vị trí chứng nhận 1', 'Vị trí chứng nhận 2', 'Vị trí chứng nhận 3'].map(function (label) { return window.h('div', { className: 'preview-card', key: label }, label); })));
+              return window.h('section', { key: index, className: type }, children);
             }));
           }
         });
