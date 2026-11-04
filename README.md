@@ -4,7 +4,17 @@ This repository builds a static product catalog and news site with Astro. The si
 
 ## Run the site on your computer
 
-You need Node.js 22.23.4 (or another Node.js version 20.19 or newer) and npm. The exact build version is recorded in `.node-version`.
+Use Node.js 22.23.4 and npm. That exact build version is recorded in `.node-version`; some installed dependencies require a newer Node version than the package's minimum engine declaration.
+
+On Windows with fnm, select the pinned version before installing packages:
+
+```powershell
+fnm install 22.23.4
+fnm use 22.23.4
+node --version
+```
+
+The last command should print `v22.23.4`. If fnm is not installed, install Node.js 22.23.4 with the official Windows installer and open a new PowerShell window.
 
 In PowerShell, open the repository folder and run:
 
@@ -30,6 +40,8 @@ npm run dev
 git branch --show-current
 Test-Path package-lock.json
 ```
+
+If `npm ci` fails on Windows with `EPERM` while unlinking a Rollup `.node` file, stop any `npm run dev` or `npm run preview` server with `Ctrl+C` and close other terminal sessions running this project. Then reopen PowerShell, select Node.js 22.23.4 as above, and run `npm ci` again. The file is a native dependency that Windows cannot replace while another process has it open.
 
 The implementation branch is `codex/implement-13`; its changes are in [PR #17](https://github.com/daovanduc/samngoclinh/pull/17). The repository's default branch does not include this work until the PR is merged.
 
