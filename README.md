@@ -18,11 +18,17 @@ Open <http://localhost:4321> in your browser. Stop the local server with `Ctrl+C
 If you do not have the project folder yet:
 
 ```powershell
-git clone https://github.com/daovanduc/samngoclinh.git
+git clone --branch codex/implement-13 --single-branch https://github.com/daovanduc/samngoclinh.git
 cd samngoclinh
-git switch codex/implement-13
 npm ci
 npm run dev
+```
+
+`npm ci` requires the `package-lock.json` in the implementation branch. If npm reports that the lockfile is missing, check that you are in the `samngoclinh` folder on `codex/implement-13` before running it:
+
+```powershell
+git branch --show-current
+Test-Path package-lock.json
 ```
 
 The implementation branch is `codex/implement-13`; its changes are in [PR #17](https://github.com/daovanduc/samngoclinh/pull/17). The repository's default branch does not include this work until the PR is merged.
