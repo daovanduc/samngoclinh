@@ -59,6 +59,33 @@ test('catalog cards lead to generated all-products, category, and product pages'
   }
 });
 
+test('each product detail page offers contact and working related product links', async ({ page }) => {
+  await page.goto('/products/');
+  const productHrefs = await page.locator('.product-card-link').evaluateAll((links) =>
+    links.map((link) => (link as HTMLAnchorElement).getAttribute('href')!),
+  );
+
+  for (const href of productHrefs) {
+    await page.goto(href);
+    await expect(page.locator('.product-detail-hero img')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.locator('.product-detail-hero a[href^="tel:"]')).toBeVisible();
+
+    const relatedLinks = page.locator('.related-products .product-card-link');
+    for (const relatedLink of await relatedLinks.all()) {
+      const relatedHref = await relatedLink.getAttribute('href');
+      expect(relatedHref).toMatch(/^\/products\/[a-z0-9-]+\/$/);
+      expect(relatedHref).not.toBe(href);
+      const relatedUrl = new URL(relatedHref!, page.url()).toString();
+      await relatedLink.click();
+      await expect(page).toHaveURL(relatedUrl);
+      await expect(page.locator('.product-detail-hero a[href^="tel:"]')).toBeVisible();
+      await page.goBack();
+      await expect(page).toHaveURL(new URL(href, page.url()).toString());
+    }
+  }
+});
+
 for (const viewport of [
   { name: 'desktop', width: 1280, height: 900, columns: 3 },
   { name: 'tablet', width: 800, height: 1024, columns: 2 },
@@ -83,7 +110,12 @@ for (const viewport of [
     await page.locator('.product-card-link').first().click();
     await expect(page.getByRole('heading', { name: 'Sâm Ngọc Linh ngâm mật ong 500ml', exact: true })).toBeVisible();
     await expect(page.locator('.product-detail-hero > img')).toBeVisible();
-    await expect(page.locator('a[href^="tel:"]')).toBeVisible();
+    await expect(page.locator('.product-detail-hero a[href^="tel:"]')).toBeVisible();
+    const imageBox = await page.locator('.product-detail-hero > img').boundingBox();
+    const contentBox = await page.locator('.product-detail-hero > div').boundingBox();
+    expect(imageBox).toBeTruthy();
+    expect(contentBox).toBeTruthy();
+    if (viewport.width === 390) expect(imageBox!.y).toBeLessThan(contentBox!.y);
     const detailPageWidth = await page.locator('body').evaluate((el) => el.scrollWidth);
     expect(detailPageWidth).toBeLessThanOrEqual(viewport.width);
   });
