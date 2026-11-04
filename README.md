@@ -59,9 +59,9 @@ Product detail pages show optional product fields only when they have content. R
 
 ## Change content
 
-Once Decap Turbo is configured, open `/admin/` on the deployed site, sign in, edit products/categories/news or the homepage sections, and save. Decap commits the changes to GitHub. A commit to the configured production branch runs the checks and, after Cloudflare Pages is connected, triggers a static deployment.
+Open <https://samngoclinh.pages.dev/admin/> on the deployed site, sign in, edit products/categories/news or the homepage sections, and save. Decap commits changes to GitHub on `codex/implement-13`; Cloudflare Pages automatically builds that production branch.
 
-The CMS configuration is in `public/admin/config.yml`. Its `turbo_site_id` is currently a placeholder, so CMS login and publishing are not ready yet. For setup, see:
+The CMS configuration is in `public/admin/config.yml`. Its Turbo Site ID is set. In the Decap Turbo dashboard, allow the deployed admin origin `https://samngoclinh.pages.dev` for hosted login. For setup details, see:
 
 - [Decap CMS setup](docs/deployment/decap-cms.md)
 - [Cloudflare Pages setup](docs/deployment/cloudflare-pages.md)
@@ -88,4 +88,4 @@ To run the browser suite locally, install Chromium once and run:
 
 ## Publishing status
 
-The intended flow is Decap CMS → GitHub commit → GitHub checks → Cloudflare Pages build (`npm run build`, output directory `dist`) → public `pages.dev` site. At present, the Cloudflare Pages project and Decap Turbo site still need owner account setup. The configured `samngoclinh.pages.dev` hostname is not live yet, and `public/admin/config.yml` still has `REPLACE_WITH_DECAP_TURBO_SITE_ID`. The live CMS and publish flow will work after those setup steps; do not treat a local preview as a production deployment.
+The live site is <https://samngoclinh.pages.dev>. Cloudflare Pages builds `codex/implement-13` with `npm run build` and publishes the `dist` directory. Decap CMS writes content to the same branch. Local admin access also needs `http://127.0.0.1:4322` in the Turbo site's Admin interface URL list.
