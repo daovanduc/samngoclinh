@@ -1,7 +1,4 @@
 import { defineConfig } from '@playwright/test';
-import path from 'node:path';
-
-process.env.PLAYWRIGHT_BROWSERS_PATH ??= path.join(process.cwd(), '.playwright-browsers');
 
 export default defineConfig({
   testDir: './tests',
