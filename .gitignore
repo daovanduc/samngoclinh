@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.astro-config/
+playwright-report/
+test-results/
+.playwright-browsers/
+.DS_Store
+Thumbs.db
+*:Zone.Identifier

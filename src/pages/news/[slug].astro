@@ -1,0 +1,33 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { articles } from '../../data/news';
+
+export function getStaticPaths() {
+  return articles.map((article) => ({ params: { slug: article.slug }, props: { article } }));
+}
+
+const { article } = Astro.props;
+const formatDate = (date: string) => new Intl.DateTimeFormat('vi-VN', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
+const paragraphs = article.body.split(/\n\s*\n/).filter((paragraph: string) => paragraph.trim());
+---
+<SiteLayout title={`${article.title} | Thảo Nguyên`} description={article.summary}>
+  <main class="page-shell catalog-page">
+    <nav class="breadcrumbs" aria-label="Đường dẫn">
+      <a href="/">Trang chủ</a><span aria-hidden="true">›</span>
+      <a href="/news/">Nhật ký Ngọc Linh</a><span aria-hidden="true">›</span><span>{article.title}</span>
+    </nav>
+    <article class="content-section article-panel">
+      <header class="article-header">
+        <p class="product-category">Nhật ký Ngọc Linh</p>
+        <h1>{article.title}</h1>
+        <time class="article-date" datetime={article.date}>{formatDate(article.date)}</time>
+      </header>
+      {article.image && <img class="article-cover" src={article.image} alt="" />}
+      <p class="article-summary">{article.summary}</p>
+      <div class="article-body">
+        {paragraphs.map((paragraph: string) => <p>{paragraph}</p>)}
+      </div>
+      <a class="pill-link article-back" href="/news/">← Tất cả bài viết</a>
+    </article>
+  </main>
+</SiteLayout>

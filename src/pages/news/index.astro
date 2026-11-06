@@ -1,0 +1,31 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { articles } from '../../data/news';
+
+const formatDate = (date: string) => new Intl.DateTimeFormat('vi-VN', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
+---
+<SiteLayout title="Nhật ký Ngọc Linh | Thảo Nguyên" description="Những câu chuyện và thông tin về sâm Ngọc Linh từ Thảo Nguyên.">
+  <main class="page-shell catalog-page">
+    <nav class="breadcrumbs" aria-label="Đường dẫn">
+      <a href="/">Trang chủ</a><span aria-hidden="true">›</span><span>Nhật ký Ngọc Linh</span>
+    </nav>
+    <section class="content-section" aria-labelledby="news-title">
+      <h1 class="section-title" id="news-title">Nhật ký Ngọc Linh</h1>
+      {articles.length > 0 ? (
+        <div class="product-grid news-grid">
+          {articles.map((article) => (
+            <article class="news-card">
+              {article.image && <img src={article.image} alt="" loading="lazy" />}
+              <div class="news-card-copy">
+                <time datetime={article.date}>{formatDate(article.date)}</time>
+                <h2><a href={`/news/${article.slug}/`}>{article.title}</a></h2>
+                <p>{article.summary}</p>
+                <a class="pill-link" href={`/news/${article.slug}/`}>Đọc bài viết</a>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : <p class="category-description">Các bài viết sẽ được cập nhật trong thời gian tới.</p>}
+    </section>
+  </main>
+</SiteLayout>
