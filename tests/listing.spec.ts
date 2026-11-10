@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { productsInCategory, publishedProducts } from './published-content';
 
 test('generated product listing shows the branded sections and representative products', async ({ page }) => {
   await page.goto('/');
@@ -51,7 +52,7 @@ test('catalog cards lead to generated all-products, category, and product pages'
   const productLinks = await page.locator('.product-card-link').evaluateAll((links) =>
     links.map((link) => (link as HTMLAnchorElement).getAttribute('href')),
   );
-  expect(productLinks).toHaveLength(6);
+  expect(productLinks).toHaveLength(publishedProducts.length);
   for (const href of productLinks) {
     expect(href).toMatch(/^\/products\/[a-z0-9-]+\/$/);
     const response = await page.request.get(new URL(href!, page.url()).toString());
@@ -95,7 +96,7 @@ for (const viewport of [
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Danh mục sản phẩm' })).toBeVisible();
-    await expect(page.locator('#products .product-card')).toHaveCount(6);
+    await expect(page.locator('#products .product-card')).toHaveCount(publishedProducts.length);
     const columns = await page.locator('.product-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
     expect(columns).toBe(viewport.columns);
     await expect(page.locator('.contact-panel')).toContainText('HOTLINE: 0961 851 818');
@@ -104,7 +105,7 @@ for (const viewport of [
 
     await page.goto('/products/categories/sam-ngoc-linh/');
     await expect(page.getByRole('heading', { name: 'Sâm Ngọc Linh', exact: true })).toBeVisible();
-    await expect(page.locator('.product-grid .product-card')).toHaveCount(2);
+    await expect(page.locator('.product-grid .product-card')).toHaveCount(productsInCategory('sam-ngoc-linh'));
     const categoryColumns = await page.locator('.product-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
     expect(categoryColumns).toBe(viewport.columns);
     await page.locator('.product-card-link').first().click();

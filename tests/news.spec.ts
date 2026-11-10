@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { publishedNewsCount } from './published-content';
 
 test('news cards open a generated article with its date, summary, body, and return link', async ({ page }) => {
   await page.goto('/news/');
@@ -24,13 +25,13 @@ for (const viewport of [
   test(`news list and article fit ${viewport.name} viewport`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: 900 });
     await page.goto('/news/');
-    await expect(page.locator('.news-card')).toHaveCount(1);
+    await expect(page.locator('.news-card')).toHaveCount(publishedNewsCount);
     const columns = await page.locator('.news-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
     expect(columns).toBe(viewport.columns);
     const listWidth = await page.locator('body').evaluate((el) => el.scrollWidth);
     expect(listWidth).toBeLessThanOrEqual(viewport.width);
 
-    await page.getByRole('link', { name: 'Đọc bài viết' }).click();
+    await page.getByRole('link', { name: 'Đọc bài viết' }).first().click();
     await expect(page.locator('.article-body')).toBeVisible();
     const articleWidth = await page.locator('body').evaluate((el) => el.scrollWidth);
     expect(articleWidth).toBeLessThanOrEqual(viewport.width);
