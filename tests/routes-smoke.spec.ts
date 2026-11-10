@@ -1,4 +1,14 @@
 import { expect, test } from '@playwright/test';
+import { publishedArticles, sampleCategory, sampleProduct } from './published-content';
+
+const routes = [
+  '/',
+  '/products/',
+  `/products/categories/${sampleCategory.slug}/`,
+  `/products/${sampleProduct.slug}/`,
+  '/news/',
+  ...publishedArticles.slice(0, 1).map((article) => `/news/${article.slug}/`),
+];
 
 for (const viewport of [
   { name: 'desktop', width: 1280, height: 900 },
@@ -7,7 +17,7 @@ for (const viewport of [
 ]) {
   test(`all generated content routes and primary navigation work on ${viewport.name}`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
-    for (const route of ['/', '/products/', '/products/categories/sam-ngoc-linh/', '/products/sam-ngoc-linh-ngam-mat-ong-500ml/', '/news/', '/news/hanh-trinh-sam-ngoc-linh/']) {
+    for (const route of routes) {
       const response = await page.goto(route);
       expect(response?.status(), `route should render: ${route}`).toBe(200);
       if (viewport.width <= 992) {

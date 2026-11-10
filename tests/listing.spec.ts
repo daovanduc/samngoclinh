@@ -1,14 +1,15 @@
 import { expect, test } from '@playwright/test';
-import { productsInCategory, publishedProducts } from './published-content';
+import { categoryTitle, homepageSections, productsInCategory, publishedProducts, sampleCategory, sampleProduct } from './published-content';
+
+const sectionTitle = (type: string) => homepageSections.find((section) => section.type === type)?.title;
+const firstProduct = publishedProducts[0];
 
 test('generated product listing shows the branded sections and representative products', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveTitle(/Thảo Nguyên/);
-  await expect(page.getByRole('heading', { name: 'Sản phẩm nổi bật' })).toBeVisible();
+  for (const section of homepageSections) await expect(page.getByRole('heading', { name: section.title, exact: true })).toBeVisible();
   await expect(page.getByRole('link', { name: 'Sản phẩm', exact: true })).toHaveAttribute('href', '/products/');
-  await expect(page.getByRole('heading', { name: 'Sâm Ngọc Linh ngâm mật ong 500ml' })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Thông tin cửa hàng & liên hệ' })).toBeVisible();
-  await expect(page.getByRole('img', { name: 'Hũ sâm Ngọc Linh ngâm mật ong' })).toBeVisible();
+  if (sectionTitle('products')) await expect(page.locator('#products').getByRole('heading', { name: firstProduct.title, exact: true })).toBeVisible();
   for (const image of await page.getByRole('img').all()) {
     const source = await image.getAttribute('src');
     expect(source).toBeTruthy();
@@ -37,15 +38,21 @@ test('mobile navigation is keyboard operable and exposes its expanded state', as
 test('catalog cards lead to generated all-products, category, and product pages', async ({ page }) => {
   await page.goto('/');
 
-  const productLink = page.locator('.category-card').filter({ hasText: 'Sâm Ngọc Linh' }).getByRole('link');
-  await expect(productLink).toHaveAttribute('href', '/products/categories/sam-ngoc-linh/');
-  await productLink.click();
-  await expect(page).toHaveURL(/\/products\/categories\/sam-ngoc-linh\/$/);
-  await expect(page.getByRole('heading', { name: 'Sâm Ngọc Linh', exact: true })).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Sâm Ngọc Linh ngâm mật ong 500ml' })).toBeVisible();
-  await page.getByRole('link', { name: 'Sâm Ngọc Linh ngâm mật ong 500ml' }).last().click();
-  await expect(page).toHaveURL(/\/products\/sam-ngoc-linh-ngam-mat-ong-500ml\/$/);
-  await expect(page.getByRole('heading', { name: 'Sâm Ngọc Linh ngâm mật ong 500ml' })).toBeVisible();
+  const categoryPath = `/products/categories/${sampleCategory.slug}/`;
+  const productPath = `/products/${sampleProduct.slug}/`;
+  if (sectionTitle('categories')) {
+    const categoryLink = page.locator(`.category-card a[href="${categoryPath}"]`);
+    await expect(categoryLink).toBeVisible();
+    await categoryLink.click();
+  } else {
+    await page.goto(categoryPath);
+  }
+  await expect(page).toHaveURL(new RegExp(`${categoryPath}$`));
+  await expect(page.getByRole('heading', { level: 1, name: sampleCategory.title, exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: sampleProduct.title, exact: true })).toBeVisible();
+  await page.locator(`.product-card-link[href="${productPath}"]`).click();
+  await expect(page).toHaveURL(new RegExp(`${productPath}$`));
+  await expect(page.getByRole('heading', { level: 1, name: sampleProduct.title, exact: true })).toBeVisible();
 
   await page.goto('/products/');
   await expect(page.getByRole('heading', { name: 'Tất cả sản phẩm' })).toBeVisible();
@@ -95,21 +102,24 @@ for (const viewport of [
   test(`catalog routes remain usable at ${viewport.name} width`, async ({ page }) => {
     await page.setViewportSize({ width: viewport.width, height: viewport.height });
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Danh mục sản phẩm' })).toBeVisible();
-    await expect(page.locator('#products .product-card')).toHaveCount(publishedProducts.length);
-    const columns = await page.locator('.product-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
-    expect(columns).toBe(viewport.columns);
-    await expect(page.locator('.contact-panel')).toContainText('HOTLINE: 0961 851 818');
+    if (sectionTitle('products')) {
+      await expect(page.locator('#products .product-card')).toHaveCount(publishedProducts.length);
+      const columns = await page.locator('#products .product-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
+      expect(columns).toBe(viewport.columns);
+    }
+    const contact = homepageSections.find((section) => section.type === 'contact');
+    if (contact?.body) await expect(page.locator('.contact-panel')).toContainText(contact.body.split('\n').at(-1)!.trim());
     const pageWidth = await page.locator('body').evaluate((el) => el.scrollWidth);
     expect(pageWidth).toBeLessThanOrEqual(viewport.width);
 
-    await page.goto('/products/categories/sam-ngoc-linh/');
-    await expect(page.getByRole('heading', { name: 'Sâm Ngọc Linh', exact: true })).toBeVisible();
-    await expect(page.locator('.product-grid .product-card')).toHaveCount(productsInCategory('sam-ngoc-linh'));
+    await page.goto(`/products/categories/${sampleCategory.slug}/`);
+    await expect(page.getByRole('heading', { level: 1, name: sampleCategory.title, exact: true })).toBeVisible();
+    await expect(page.locator('.product-grid .product-card')).toHaveCount(productsInCategory(sampleCategory.slug).length);
     const categoryColumns = await page.locator('.product-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
     expect(categoryColumns).toBe(viewport.columns);
     await page.locator('.product-card-link').first().click();
-    await expect(page.getByRole('heading', { name: 'Sâm Ngọc Linh ngâm mật ong 500ml', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: sampleProduct.title, exact: true })).toBeVisible();
+    await expect(page.locator('.product-detail-hero .product-category')).toHaveText(categoryTitle(sampleProduct.category));
     await expect(page.locator('.product-detail-hero > img')).toBeVisible();
     await expect(page.locator('.product-detail-hero a[href^="tel:"]')).toBeVisible();
     const imageBox = await page.locator('.product-detail-hero > img').boundingBox();
@@ -121,3 +131,18 @@ for (const viewport of [
     expect(detailPageWidth).toBeLessThanOrEqual(viewport.width);
   });
 }
+
+test('product detail pages never render empty optional sections', async ({ page }) => {
+  for (const product of publishedProducts) {
+    await page.goto(`/products/${product.slug}/`);
+    for (const section of await page.locator('.product-detail-copy').all()) {
+      await expect(section.getByRole('heading', { level: 2 })).not.toBeEmpty();
+      const text = (await section.innerText()).replace((await section.getByRole('heading', { level: 2 }).innerText()), '').trim();
+      expect(text.length, `"${product.slug}" shows a heading without content`).toBeGreaterThan(0);
+    }
+    for (const related of await page.locator('.related-products .product-card-link').all()) {
+      const slug = (await related.getAttribute('href'))!.split('/').at(-2);
+      expect(publishedProducts.find((item) => item.slug === slug)?.category, 'related products share the category').toBe(product.category);
+    }
+  }
+});

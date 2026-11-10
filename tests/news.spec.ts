@@ -1,18 +1,22 @@
 import { expect, test } from '@playwright/test';
-import { publishedNewsCount } from './published-content';
+import { publishedArticles, publishedNewsCount } from './published-content';
+
+const article = publishedArticles[0];
 
 test('news cards open a generated article with its date, summary, body, and return link', async ({ page }) => {
   await page.goto('/news/');
   await expect(page).toHaveTitle(/Nhật ký Ngọc Linh/);
   await expect(page.getByRole('heading', { name: 'Nhật ký Ngọc Linh', exact: true })).toBeVisible();
-  const articleLink = page.getByRole('link', { name: 'Hành trình tìm hiểu sâm Ngọc Linh' });
-  await expect(articleLink).toHaveAttribute('href', '/news/hanh-trinh-sam-ngoc-linh/');
+  test.skip(!article, 'no published articles');
+  const articlePath = `/news/${article.slug}/`;
+  const articleLink = page.locator(`.news-card a[href="${articlePath}"]`).first();
+  await expect(articleLink).toBeVisible();
   await articleLink.click();
-  await expect(page).toHaveURL(/\/news\/hanh-trinh-sam-ngoc-linh\/$/);
-  await expect(page.getByRole('heading', { name: 'Hành trình tìm hiểu sâm Ngọc Linh', exact: true })).toBeVisible();
-  await expect(page.locator('time')).toHaveAttribute('datetime', '2026-10-15');
-  await expect(page.getByText(/Cùng tìm hiểu vùng núi Ngọc Linh/)).toBeVisible();
-  await expect(page.getByText(/hệ sinh thái phong phú/)).toBeVisible();
+  await expect(page).toHaveURL(new RegExp(`${articlePath}$`));
+  await expect(page.getByRole('heading', { level: 1, name: article.title, exact: true })).toBeVisible();
+  await expect(page.locator('time')).toHaveAttribute('datetime', article.date);
+  await expect(page.getByText(article.summary.trim(), { exact: false }).first()).toBeVisible();
+  await expect(page.locator('.article-body')).not.toBeEmpty();
   await page.getByRole('link', { name: 'Tất cả bài viết' }).click();
   await expect(page).toHaveURL(/\/news\/$/);
 });
