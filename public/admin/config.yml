@@ -3,7 +3,7 @@ site_url: https://samngoclinh.pages.dev
 
 backend:
   name: turbo-github
-  turbo_site_id: dd587012-cf5f-4b4a-847b-33237db94947
+  turbo_site_id: ae1498f9-0a04-4336-a5bd-072e4e99cff8
   branch: codex/implement-13
 
 media_folder: public/assets/images/uploads
