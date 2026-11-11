@@ -26,4 +26,10 @@ describe('content validation', () => {
     assert.match(errors.join('\n'), /unsupported section type/);
     assert.match(errors.join('\n'), /section 1.*title/);
   });
+  it('accepts recipe and value cards and rejects untitled cards', () => {
+    const items = [{ icon: '⭐', title: 'Chất lượng', body: 'Chọn lọc kỹ càng' }];
+    assert.deepEqual(validateContent({ ...valid, sections: [{ type: 'recipes', title: 'Công thức', items }, { type: 'values', title: 'Giá trị', items }] }), []);
+    const errors = validateContent({ ...valid, sections: [{ type: 'values', title: 'Giá trị', items: [{ title: '' }] }] });
+    assert.match(errors.join('\n'), /section 1, item 1.*title/);
+  });
 });

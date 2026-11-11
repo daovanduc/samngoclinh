@@ -33,6 +33,14 @@
               if (type === 'categories') children.push(window.h('div', { className: 'preview-cards' }, ['Danh mục 1', 'Danh mục 2', 'Danh mục 3'].map(function (label) { return window.h('div', { className: 'preview-card', key: label }, label); })));
               if (type === 'products') children.push(window.h('div', { className: 'preview-cards' }, ['Sản phẩm 1', 'Sản phẩm 2', 'Sản phẩm 3'].map(function (label) { return window.h('div', { className: 'preview-card', key: label }, label); })));
               if (type === 'certificates') children.push(window.h('div', { className: 'preview-cards' }, ['Vị trí chứng nhận 1', 'Vị trí chứng nhận 2', 'Vị trí chứng nhận 3'].map(function (label) { return window.h('div', { className: 'preview-card', key: label }, label); })));
+              if (type === 'recipes' || type === 'values') {
+                var items = section.get('items');
+                var cards = items ? items.toArray().map(function (item, i) {
+                  var icon = item.get('icon');
+                  return window.h('div', { className: 'preview-card', key: i }, (icon ? icon + ' ' : '') + (item.get('title') || ''));
+                }) : [];
+                children.push(window.h('div', { className: 'preview-cards' }, cards));
+              }
               return window.h('section', { key: index, className: type }, children);
             }));
           }

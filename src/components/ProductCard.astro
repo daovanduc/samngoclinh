@@ -1,0 +1,23 @@
+---
+// Product card in the original homepage style (.product-card in product-storytelling.css).
+interface Props {
+  product: { slug: string; title: string; image: string; alt: string; summary: string };
+  meta?: string;
+  level?: 'h2' | 'h3';
+  action?: string;
+}
+const { product, meta, level = 'h2', action = 'Xem chi tiết' } = Astro.props;
+const Heading = level;
+const href = `/products/${product.slug}/`;
+---
+<article class="product-card">
+  <a class="product-card-link" href={href} aria-label={product.title}>
+    <div class="product-image"><img src={product.image} alt={product.alt} class="product-img" loading="lazy" /></div>
+    <div class="product-info">
+      {meta && <p class="product-meta">{meta}</p>}
+      <Heading class="product-name">{product.title}</Heading>
+      <p class="product-description">{product.summary}</p>
+    </div>
+  </a>
+  <a class="card-action" href={href} tabindex="-1" aria-hidden="true">{action}</a>
+</article>

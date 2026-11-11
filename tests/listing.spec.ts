@@ -41,7 +41,7 @@ test('catalog cards lead to generated all-products, category, and product pages'
   const categoryPath = `/products/categories/${sampleCategory.slug}/`;
   const productPath = `/products/${sampleProduct.slug}/`;
   if (sectionTitle('categories')) {
-    const categoryLink = page.locator(`.category-card a[href="${categoryPath}"]`);
+    const categoryLink = page.locator(`[data-page-section="categories"] a[href="${categoryPath}"]`);
     await expect(categoryLink).toBeVisible();
     await categoryLink.click();
   } else {
@@ -104,11 +104,11 @@ for (const viewport of [
     await page.goto('/');
     if (sectionTitle('products')) {
       await expect(page.locator('#products .product-card')).toHaveCount(publishedProducts.length);
-      const columns = await page.locator('#products .product-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
+      const columns = await page.locator('#products .products-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
       expect(columns).toBe(viewport.columns);
     }
     const contact = homepageSections.find((section) => section.type === 'contact');
-    if (contact?.body) await expect(page.locator('.contact-panel')).toContainText(contact.body.split('\n').at(-1)!.trim());
+    if (contact?.body) await expect(page.locator('#contact')).toContainText(contact.body.split('\n').at(-1)!.trim());
     const pageWidth = await page.locator('body').evaluate((el) => el.scrollWidth);
     expect(pageWidth).toBeLessThanOrEqual(viewport.width);
 

@@ -12,8 +12,8 @@ for (const viewport of [{ name: 'desktop', width: 1280 }, { name: 'tablet', widt
       await expect(section).toHaveAttribute('data-page-section', authored.type);
       await expect(section).toBeVisible();
       await expect(section.getByRole('heading', { name: authored.title, exact: true }).first()).toBeVisible();
-      if (authored.body && ['categories', 'products', 'certificates'].includes(authored.type)) {
-        await expect(section.locator(':scope > .section-description')).toHaveText(authored.body);
+      if (authored.body && ['categories', 'products', 'recipes', 'values', 'certificates'].includes(authored.type)) {
+        await expect(section.locator('.section-description').first()).toHaveText(authored.body);
       }
     }
     expect(await page.locator('body').evaluate((el) => el.scrollWidth)).toBeLessThanOrEqual(viewport.width);

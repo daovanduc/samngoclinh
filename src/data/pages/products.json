@@ -1,9 +1,69 @@
 {
   "sections": [
-    { "type": "hero", "title": "Tinh hoa từ núi rừng Ngọc Linh", "body": "Thảo Nguyên – Sâm Ngọc Linh" },
-    { "type": "categories", "title": "Danh mục sản phẩm", "body": "Khám phá những sản vật từ núi rừng Ngọc Linh." },
-    { "type": "products", "title": "Sản phẩm nổi bật", "body": "Chọn một sản phẩm để xem thông tin chi tiết." },
-    { "type": "certificates", "title": "Chứng nhận và cam kết của Thảo Nguyên", "body": "Thông tin chứng nhận và cam kết chất lượng của Thảo Nguyên." },
-    { "type": "contact", "title": "Thông tin cửa hàng & liên hệ", "body": "Thảo Nguyên – Sâm Ngọc Linh\nĐịa chỉ: Tầng 1, Tòa nhà The ZEI Plaza\nSố 08 Lê Đức Thọ, Nam Từ Liêm, Hà Nội\nHOTLINE: 0961 851 818" }
+    {
+      "type": "hero",
+      "title": "Tinh hoa từ núi rừng Ngọc Linh",
+      "body": "Thảo Nguyên – Sâm Ngọc Linh"
+    },
+    {
+      "type": "categories",
+      "title": "Danh mục sản phẩm",
+      "body": "Khám phá những sản vật từ núi rừng Ngọc Linh."
+    },
+    {
+      "type": "products",
+      "title": "Sản phẩm nổi bật",
+      "body": "Chọn một sản phẩm để xem thông tin chi tiết."
+    },
+    {
+      "type": "recipes",
+      "title": "Công Thức",
+      "body": "Khám phá những cách thưởng thức sản phẩm của chúng tôi, từ những công thức truyền thống đến những cách pha chế hiện đại, mỗi cách đều mang lại một trải nghiệm độc đáo.",
+      "items": [
+        {
+          "title": "Công Thức Truyền Thống",
+          "body": "Các cách sử dụng đã được truyền qua nhiều thế hệ, giữ nguyên hương vị và giá trị của dược liệu."
+        },
+        {
+          "title": "Công Thức Hiện Đại",
+          "body": "Những cách pha chế mới, kết hợp với các nguyên liệu hiện đại để tạo nên trải nghiệm độc đáo."
+        },
+        {
+          "title": "Lối Sống Lành Mạnh",
+          "body": "Cách tích hợp sản phẩm vào cuộc sống hàng ngày một cách tự nhiên và bền vững."
+        }
+      ]
+    },
+    {
+      "type": "values",
+      "title": "Giá Trị Cốt Lõi",
+      "items": [
+        {
+          "icon": "⭐",
+          "title": "Chất Lượng",
+          "body": "Mỗi sản phẩm đều được chọn lọc kỹ càng, đảm bảo tiêu chuẩn chất lượng cao nhất"
+        },
+        {
+          "icon": "🌿",
+          "title": "Tự Nhiên",
+          "body": "Trồng và thu hoạch hoàn toàn tự nhiên, không can thiệp hóa chất"
+        },
+        {
+          "icon": "🏆",
+          "title": "Được Chứng Nhận",
+          "body": "Giấy kiểm định từ các tổ chức uy tín, đảm bảo an toàn và chất lượng"
+        },
+        {
+          "icon": "❤️",
+          "title": "Nguồn Gốc",
+          "body": "Dược liệu tinh tuyển từ vùng núi Ngọc Linh, nơi thiên nhiên còn nguyên vẹn"
+        }
+      ]
+    },
+    {
+      "type": "contact",
+      "title": "Thông tin cửa hàng & liên hệ",
+      "body": "Thảo Nguyên – Sâm Ngọc Linh\nĐịa chỉ: Tầng 1, Tòa nhà The ZEI Plaza\nSố 08 Lê Đức Thọ, Nam Từ Liêm, Hà Nội\nHOTLINE: 0961 851 818"
+    }
   ]
 }

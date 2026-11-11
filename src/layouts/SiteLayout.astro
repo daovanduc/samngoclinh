@@ -1,6 +1,28 @@
 ---
-interface Props { title?: string; description?: string }
-const { title = 'Thảo Nguyên – Sâm Ngọc Linh', description = 'Sâm Ngọc Linh và dược liệu quý từ núi rừng Việt Nam.' } = Astro.props;
+// Shared shell that reproduces the original branded homepage (index.html):
+// fixed dark-green header with the logo centred between two link groups,
+// gold accents, and the dark footer. Visual rules live in
+// /assets/css/product-storytelling.css (copied from the original site);
+// the styles below only cover pages the original design did not have.
+import SiteFooter from '../components/SiteFooter.astro';
+
+interface Props { title?: string; description?: string; hero?: boolean; footer?: boolean }
+const {
+  title = 'Thảo Nguyên – Sâm Ngọc Linh',
+  description = 'Sâm Ngọc Linh và dược liệu quý từ núi rừng Việt Nam.',
+  hero = false,
+  footer = true,
+} = Astro.props;
+
+const leftLinks = [
+  { href: '/#about', label: 'Giới thiệu' },
+  { href: '/products/', label: 'Sản phẩm' },
+];
+const rightLinks = [
+  { href: '/news/', label: 'Tin tức' },
+  { href: '/#recipes', label: 'Công thức' },
+  { href: '/#contact', label: 'Liên hệ' },
+];
 ---
 <!doctype html>
 <html lang="vi">
@@ -8,152 +30,207 @@ const { title = 'Thảo Nguyên – Sâm Ngọc Linh', description = 'Sâm Ngọ
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#205b39" />
+    <meta name="theme-color" content="#0d2818" />
     <title>{title}</title>
+    <link rel="icon" href="/assets/images/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/assets/css/product-storytelling.css" />
+    <noscript><style>[data-aos], img[loading="lazy"] { opacity: 1 !important; transform: none !important; }</style></noscript>
   </head>
-  <body>
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="brand" href="/" aria-label="Thảo Nguyên – về trang chủ">
-          <img src="/assets/images/logo.png" alt="Thảo Nguyên – Sâm Ngọc Linh" />
-        </a>
-        <button class="menu-toggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="primary-navigation">
-          <span></span><span></span><span></span>
-        </button>
-        <nav id="primary-navigation" class="primary-navigation" aria-label="Điều hướng chính">
-          <a href="/#about">Giới thiệu</a>
-          <a href="/products/">Sản phẩm</a>
-          <a href="/news/">Nhật ký Ngọc Linh</a>
-          <a href="/#contact">Liên hệ</a>
+  <body class:list={[hero ? 'has-hero' : 'no-hero']}>
+    <header class:list={['header-area', 'header-sticky', !hero && 'scrolled']} id="header">
+      <div class="container">
+        <nav class="header-content" aria-label="Điều hướng chính">
+          <div class="nav nav-left">
+            <ul class="nav-list">{leftLinks.map((link) => <li><a href={link.href} class="nav-link">{link.label}</a></li>)}</ul>
+          </div>
+          <div class="logo">
+            <a href="/" aria-label="Thảo Nguyên – về trang chủ">
+              <img src="/assets/images/logo.png" alt="Logo Sâm Ngọc Linh - Thảo Nguyên" />
+            </a>
+          </div>
+          <div class="nav nav-right">
+            <ul class="nav-list">{rightLinks.map((link) => <li><a href={link.href} class="nav-link">{link.label}</a></li>)}</ul>
+          </div>
+          <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Mở menu" aria-expanded="false" aria-controls="mobile-navigation">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="mobile-nav-container" id="mobile-navigation">
+            <ul class="nav-list">{[...leftLinks, ...rightLinks].map((link) => <li><a href={link.href} class="nav-link">{link.label}</a></li>)}</ul>
+          </div>
         </nav>
       </div>
     </header>
     <slot />
+    {footer && <SiteFooter />}
     <script>
-      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
-      const navigation = document.querySelector<HTMLElement>('#primary-navigation');
-      const setExpanded = (expanded: boolean) => {
-        toggle?.setAttribute('aria-expanded', String(expanded));
-        toggle?.setAttribute('aria-label', expanded ? 'Đóng menu' : 'Mở menu');
-        navigation?.classList.toggle('is-open', expanded);
+      document.documentElement.classList.add('js-enabled');
+
+      // Header turns solid once the hero scrolls away (pages without a hero start solid).
+      const header = document.getElementById('header');
+      if (header && document.body.classList.contains('has-hero')) {
+        const update = () => header.classList.toggle('scrolled', window.scrollY > 80);
+        update();
+        window.addEventListener('scroll', update, { passive: true });
+      }
+
+      // Accessible mobile menu.
+      const toggle = document.getElementById('mobileMenuToggle') as HTMLButtonElement | null;
+      const menu = document.getElementById('mobile-navigation');
+      const setOpen = (open: boolean) => {
+        toggle?.setAttribute('aria-expanded', String(open));
+        toggle?.setAttribute('aria-label', open ? 'Đóng menu' : 'Mở menu');
+        toggle?.classList.toggle('active', open);
+        menu?.classList.toggle('active', open);
       };
-      toggle?.addEventListener('click', () => setExpanded(toggle.getAttribute('aria-expanded') !== 'true'));
-      navigation?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setExpanded(false)));
+      toggle?.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+      menu?.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
-          setExpanded(false);
+          setOpen(false);
           toggle.focus();
         }
       });
+
+      // The original CSS fades lazy images in once they carry .loaded.
+      document.querySelectorAll<HTMLImageElement>('img[loading="lazy"]').forEach((img) => {
+        if (img.complete) img.classList.add('loaded');
+        else img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+      });
+
+      // Reveal-on-scroll used by the original design ([data-aos]).
+      const animated = document.querySelectorAll<HTMLElement>('[data-aos]');
+      const reveal = (el: HTMLElement) => {
+        const delay = Number(el.dataset.aosDelay || 0);
+        window.setTimeout(() => el.classList.add('aos-animate'), delay);
+      };
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+        animated.forEach((el) => el.classList.add('aos-animate'));
+      } else {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              reveal(entry.target as HTMLElement);
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+        animated.forEach((el) => observer.observe(el));
+      }
     </script>
   </body>
 </html>
 <style is:global>
-  :root { font-family: 'Montserrat', Arial, sans-serif; color: #fff; background: #123d28; font-synthesis: none; }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { margin: 0; min-width: 320px; background: #123d28 url('/assets/images/hero-background1.jpg') center top / cover fixed; }
+  body { font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif; color: var(--text-dark); background: #fff; }
   a { color: inherit; }
-  img { max-width: 100%; }
-  .site-header { position: relative; z-index: 10; background: #205b39; }
-  .header-inner { width: min(1200px, calc(100% - 48px)); min-height: 94px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 36px; }
-  .brand { display: block; flex: 0 0 270px; line-height: 0; }
-  .brand img { width: 100%; height: 64px; object-fit: contain; object-position: left center; }
-  .primary-navigation { display: flex; align-items: center; gap: clamp(20px, 4vw, 60px); }
-  .primary-navigation a { text-decoration: none; text-transform: uppercase; font-weight: 700; font-size: clamp(.85rem, 1.4vw, 1.1rem); white-space: nowrap; }
-  .primary-navigation a:hover, .primary-navigation a:focus-visible { color: #e6c85a; }
-  .menu-toggle { display: none; width: 48px; height: 48px; border: 1px solid #e6c85a; background: transparent; border-radius: 8px; color: white; cursor: pointer; }
-  .menu-toggle span { display: block; width: 22px; height: 2px; margin: 5px auto; background: currentColor; }
-  :focus-visible { outline: 3px solid #f0d467; outline-offset: 3px; }
-  .page-shell { width: min(1440px, calc(100% - 48px)); margin: 42px auto; }
-  .hero { min-height: clamp(230px, 31vw, 360px); display: grid; align-items: center; padding: clamp(24px, 6vw, 84px); background: linear-gradient(90deg, rgba(14, 50, 30, .22), rgba(14, 50, 30, .1)), url('/assets/images/hero-background.jpg') center 45% / cover; }
-  .hero h1 { max-width: 550px; margin: 0; color: #f7e8a5; font: italic 600 clamp(2.4rem, 6.4vw, 5rem)/1.04 Georgia, serif; }
-  .hero p { max-width: 520px; font-size: clamp(1rem, 2vw, 1.3rem); line-height: 1.6; }
-  .content-section { margin-top: 40px; padding: clamp(24px, 4vw, 50px); border-radius: 28px; background: rgba(20, 90, 55, .82); }
-  .section-title { margin: 0 0 24px; text-align: center; color: white; font-size: clamp(1.4rem, 3vw, 2.2rem); text-transform: uppercase; }
-  .section-description { max-width: 760px; margin: -12px auto 24px; color: #f1f3ee; text-align: center; line-height: 1.7; white-space: pre-line; }
-  .category-grid, .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; width: min(100%, 960px); margin: auto; }
-  .category-card, .product-card { min-width: 0; overflow: hidden; border-radius: 20px; background: #fff; color: #204c36; text-align: center; }
-  .category-card { padding: 16px; }
-  .category-card img { width: 100%; height: 145px; object-fit: contain; }
-  .category-card h3 { margin: 12px 0; font-size: clamp(1rem, 1.8vw, 1.25rem); text-transform: uppercase; }
-  .pill-link, .contact-button { display: inline-flex; justify-content: center; align-items: center; min-height: 44px; padding: 8px 34px; border: 0; border-radius: 999px; background: #076246; color: #fff; text-decoration: none; font-size: 1rem; }
-  .product-card { padding: 16px; }
-  .product-card-link { display: block; color: inherit; text-decoration: none; }
-  .product-card-link:hover h2, .product-card-link:hover h3 { color: #076246; text-decoration: underline; }
-  .product-card h2 { min-height: 3em; margin: 8px 0 4px; font-size: clamp(1rem, 1.6vw, 1.2rem); }
-  .product-card img { width: 100%; height: clamp(150px, 18vw, 220px); object-fit: contain; }
-  .product-card h3 { min-height: 3em; margin: 8px 0 4px; font-size: clamp(1rem, 1.6vw, 1.2rem); }
-  .product-card p { margin: 4px 0 12px; }
-  .certificate-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 14px; border-radius: 16px; background: #fff; }
-  .certificate-placeholder { display: grid; min-height: 150px; place-items: center; padding: 16px; background: #14583a; color: #f4df80; text-align: center; font-weight: 600; }
-  .contact-panel { display: grid; grid-template-columns: 1.4fr 1fr; align-items: center; gap: 32px; }
-  .contact-panel h2 { font-size: clamp(1.3rem, 2.7vw, 2rem); text-transform: uppercase; }
-  .contact-panel p { font-size: clamp(1rem, 2vw, 1.25rem); line-height: 1.8; }
-  .contact-logo { width: min(100%, 260px); justify-self: center; }
-  footer { padding: 22px; text-align: center; background: #103b29; }
-  .catalog-page { margin-top: 30px; }
-  .breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 9px; margin: 0 12px 22px; font-size: .95rem; }
-  .breadcrumbs a { text-decoration: none; }
-  .breadcrumbs a:hover { color: #f0d467; }
-  .category-navigation { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 22px; padding: 14px 12px 22px; }
-  .category-navigation a { text-decoration: none; text-transform: uppercase; font-weight: 700; }
-  .category-navigation a:hover, .category-navigation a.active { color: #f0d467; }
-  .category-description { max-width: 760px; margin: 0 auto 26px; line-height: 1.7; }
-  .product-detail-hero { display: grid; grid-template-columns: minmax(260px, .8fr) minmax(0, 1.2fr); align-items: center; gap: clamp(28px, 6vw, 72px); padding: clamp(12px, 2vw, 24px); }
-  .product-detail-hero > img { width: 100%; max-height: 460px; object-fit: contain; background: #fff; }
-  .product-category { margin: 0; font-size: clamp(1.2rem, 2.5vw, 1.8rem); }
-  .product-detail h1 { margin: 8px 0; font-size: clamp(1.7rem, 4vw, 2.7rem); }
-  .product-size { margin: 8px 0 24px; font-size: clamp(1.2rem, 2.5vw, 1.8rem); }
-  .product-description, .product-detail-copy { line-height: 1.7; }
-  .product-detail-copy { margin: 28px 0 0; padding-top: 20px; border-top: 1px solid #ffffff77; }
-  .product-detail-copy h2 { margin-top: 0; }
-  .product-detail-text { white-space: pre-line; line-height: 1.8; }
-  .product-detail-copy li + li { margin-top: 8px; }
-  .related-products { margin-bottom: 40px; }
-  .news-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; background: #fff; color: #204c36; }
-  .news-card > img { width: 100%; height: 210px; object-fit: cover; background: #fff; }
-  .news-card-copy { display: flex; flex: 1; flex-direction: column; align-items: flex-start; padding: 20px; }
-  .news-card time, .article-date { color: #53725f; font-size: .95rem; }
-  .news-card h2 { margin: 10px 0; font-size: clamp(1.1rem, 1.8vw, 1.35rem); }
-  .news-card h2 a { text-decoration: none; }
-  .news-card p { line-height: 1.65; }
-  .news-card .pill-link { margin-top: auto; }
-  .article-panel { padding: clamp(22px, 4vw, 48px); }
-  .article-header { max-width: 900px; margin: 0 auto 30px; }
-  .article-header h1 { margin: 12px 0; font-size: clamp(1.8rem, 4.5vw, 3.2rem); line-height: 1.15; }
-  .article-cover { display: block; width: min(100%, 1000px); max-height: 540px; margin: 0 auto 32px; border-radius: 16px; object-fit: cover; }
-  .article-summary, .article-body { max-width: 900px; margin: 0 auto; font-size: clamp(1rem, 1.5vw, 1.2rem); line-height: 1.8; }
-  .article-summary { margin-bottom: 24px; font-weight: 600; }
-  .article-body p { margin: 0 0 1.15em; white-space: pre-line; }
-  .article-back { display: inline-flex; margin-top: 30px; }
-  @media (max-width: 992px) {
-    .header-inner { min-height: 78px; }
-    .brand { flex-basis: 230px; }
-    .category-grid, .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .certificate-grid { grid-template-columns: repeat(2, 1fr); }
-    .menu-toggle { display: block; }
-    .primary-navigation { position: absolute; inset: 100% 0 auto; display: none; padding: 12px 24px 24px; flex-direction: column; align-items: stretch; gap: 0; background: #205b39; box-shadow: 0 12px 18px #09291866; }
-    .primary-navigation.is-open { display: flex; }
-    .primary-navigation a { padding: 14px 8px; border-top: 1px solid #ffffff2b; }
+  :focus-visible { outline: 3px solid var(--primary-gold); outline-offset: 3px; }
+  /* The original slide-in offsets push content past the viewport before it animates. */
+  main, .story-group { overflow-x: clip; }
+  @media (min-width: 769px) and (max-width: 1100px) {
+    .header-area .container { padding: 0 20px; }
+    .header-content { gap: 1.25rem; }
+    .header-content .nav-list { gap: 1.1rem; }
+    .header-content .nav-link { font-size: .75rem; letter-spacing: .06em; white-space: nowrap; }
+    .logo::before, .logo::after { display: none; }
   }
-  @media (max-width: 767px) {
-    .header-inner, .page-shell { width: min(100% - 28px, 620px); }
-    .brand { flex-basis: 205px; }
-    .brand img { height: 58px; }
-    .page-shell { margin: 20px auto; }
-    .hero { min-height: 230px; background-position: 56% center; }
-    .content-section { margin-top: 20px; padding: 22px 16px; border-radius: 22px; }
-    .category-grid, .product-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; max-width: 400px; }
-    .category-card img { height: 160px; }
-    .product-card img { height: 210px; }
-    .certificate-placeholder { min-height: 120px; }
-    .contact-panel { grid-template-columns: 1fr; }
-    .category-navigation { flex-direction: column; align-items: flex-start; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* Header: the original used a <div> toggle and a JS-built mobile list. */
+  button.mobile-menu-toggle { appearance: none; font: inherit; color: inherit; }
+  .mobile-nav-container { visibility: hidden; }
+  .mobile-nav-container.active { visibility: visible; }
+  @media (min-width: 769px) { .mobile-nav-container { display: none; } }
+  .logo a { display: block; line-height: 0; }
+
+  /* Homepage pieces the original styled inline */
+  .story-heading { padding: 90px 20px 0; }
+  .product-story-title { text-transform: uppercase; }
+  .story-heading .section-intro { margin-bottom: 0; }
+  .story-group .product-story-section:first-of-type { padding-top: 40px; }
+  .recipes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 3rem; }
+  .recipe-card { text-align: center; }
+  .recipe-title { font-size: 1.3rem; margin-bottom: 1rem; font-weight: 400; letter-spacing: .02em; }
+  .recipe-description { color: var(--text-dark); font-weight: 300; line-height: 1.8; }
+  .scroll-indicator { text-decoration: none; }
+  .featured-products .product-meta { margin: 0 0 .5rem; color: var(--primary-gold-dark); font-size: .72rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
+  .no-hero main:not(.page-shell) { padding-top: 90px; }
+
+  /* Footer additions */
+  .footer .footer-title { font-size: 1.1rem; }
+  .footer-contact-lines .footer-text { margin-bottom: .35rem; }
+  .footer-call { display: inline-block; margin-top: .75rem; text-decoration: none; }
+
+  /* ---- Pages beyond the original homepage (catalogue, product, news) ---- */
+  .page-shell { padding: 140px 0 90px; background: linear-gradient(180deg, #f5f0e6 0%, #fafafa 340px, #fafafa 100%); min-height: 70vh; }
+  .page-shell > * { max-width: 1200px; margin-left: auto; margin-right: auto; padding-left: 20px; padding-right: 20px; }
+  .page-shell section { padding: 0; overflow: visible; }
+  .breadcrumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 28px; font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; color: var(--text-light); }
+  .breadcrumbs a { color: var(--primary-green); text-decoration: none; }
+  .breadcrumbs a:hover { color: var(--primary-gold-dark); }
+  .breadcrumbs span[aria-hidden] { color: var(--primary-gold); }
+  .page-heading { text-align: center; }
+  .page-heading .eyebrow, .product-category, .article-kicker { margin: 0 0 .75rem; color: var(--primary-gold-dark); font-size: .8rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+  .page-intro { max-width: 720px; margin: -1.5rem auto 3rem; text-align: center; line-height: 1.8; font-weight: 300; }
+  .category-navigation { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 48px; }
+  .category-navigation a { padding: 10px 22px; border: 1px solid rgba(26, 77, 46, .25); border-radius: 999px; color: var(--primary-green); background: #fff; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; transition: var(--transition); }
+  .category-navigation a:hover, .category-navigation a.active { background: var(--primary-green); border-color: var(--primary-green); color: #fff; }
+
+  /* Product grid: 3 / 2 / 1 columns, cards reuse the original .product-card look. */
+  .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem; }
+  .product-grid .product-card { display: flex; flex-direction: column; }
+  .product-card-link { display: block; flex: 1; color: inherit; text-decoration: none; }
+  .product-card .product-meta { margin: 0 0 .5rem; color: var(--primary-gold-dark); font-size: .75rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
+  .product-card .product-name { margin-bottom: .5rem; }
+  .product-card .product-description { margin: 0; }
+  .card-action { display: block; margin: .75rem .75rem .25rem; padding: 12px 20px; border: 1px solid var(--primary-green); border-radius: 0; color: var(--primary-green); font-size: .78rem; font-weight: 600; letter-spacing: .12em; text-align: center; text-transform: uppercase; text-decoration: none; transition: var(--transition); }
+  .card-action:hover { background: var(--primary-green); color: #fff; }
+
+  /* Product detail */
+  .product-detail { padding: clamp(24px, 4vw, 56px); border-radius: 24px; background: #fff; box-shadow: 0 8px 30px rgba(0, 0, 0, .06); border: 1px solid rgba(26, 77, 46, .08); }
+  .product-detail-hero { display: grid; grid-template-columns: minmax(260px, .9fr) minmax(0, 1.1fr); align-items: center; gap: clamp(28px, 6vw, 72px); }
+  .product-detail-hero > img { width: 100%; max-height: 520px; object-fit: cover; border-radius: 20px; box-shadow: 0 25px 50px rgba(26, 77, 46, .18); }
+  .product-detail h1 { margin: 0 0 1rem; color: var(--primary-green); font-size: clamp(1.8rem, 3.6vw, 2.8rem); font-weight: 400; letter-spacing: .03em; line-height: 1.2; }
+  .product-size { margin: 0 0 1.5rem; color: var(--text-light); font-size: 1.05rem; }
+  .product-lead { margin: 0 0 2rem; line-height: 1.9; font-weight: 300; }
+  .page-shell .product-story-btn { opacity: 1; transform: none; }
+  .product-detail-copy { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(201, 162, 39, .3); }
+  .product-detail-copy h2 { margin: 0 0 1rem; color: var(--primary-green); font-size: 1.3rem; font-weight: 500; letter-spacing: .03em; }
+  .product-detail-text, .product-detail-copy ul { line-height: 1.9; font-weight: 300; white-space: pre-line; }
+  .product-detail-copy ul { white-space: normal; padding-left: 1.2rem; }
+  .product-detail-copy li + li { margin-top: .5rem; }
+  .related-products { margin-top: 90px; }
+
+  /* News */
+  .news-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem; }
+  .news-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; background: #fff; box-shadow: 0 8px 30px rgba(0, 0, 0, .08); border: 1px solid rgba(26, 77, 46, .1); transition: var(--transition); }
+  .news-card:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(26, 77, 46, .15); }
+  .news-card > img { width: 100%; height: 220px; object-fit: cover; }
+  .news-card-copy { display: flex; flex: 1; flex-direction: column; padding: 1.5rem; }
+  .news-card time, .article-date { color: var(--primary-gold-dark); font-size: .8rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .news-card h2 { margin: .75rem 0; color: var(--primary-green); font-size: 1.2rem; font-weight: 600; line-height: 1.4; }
+  .news-card h2 a { text-decoration: none; }
+  .news-card p { margin: 0 0 1.25rem; line-height: 1.8; font-weight: 300; }
+  .news-card .card-action { margin: auto 0 0; }
+  .empty-state { text-align: center; font-weight: 300; }
+  .article-panel { max-width: 920px; padding: clamp(24px, 5vw, 64px); border-radius: 24px; background: #fff; box-shadow: 0 8px 30px rgba(0, 0, 0, .06); }
+  .article-header { text-align: center; margin-bottom: 2.5rem; }
+  .article-header h1 { margin: 0 0 1rem; color: var(--primary-green); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 400; line-height: 1.25; }
+  .article-cover { display: block; width: 100%; max-height: 520px; margin: 0 auto 2.5rem; border-radius: 16px; object-fit: cover; }
+  .article-summary { margin: 0 0 2rem; font-size: 1.15rem; font-weight: 500; line-height: 1.8; color: var(--primary-green); }
+  .article-body { line-height: 1.95; font-weight: 300; font-size: 1.05rem; }
+  .article-body p { margin: 0 0 1.2em; white-space: pre-line; }
+  .article-back { margin-top: 2rem; }
+
+  @media (max-width: 992px) {
+    .product-grid, .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.75rem; }
+  }
+  @media (max-width: 768px) {
+    .page-shell { padding-top: 110px; }
+    .product-grid, .news-grid { grid-template-columns: minmax(0, 1fr); }
     .product-detail-hero { grid-template-columns: 1fr; }
-    .product-detail-hero > img { max-height: 320px; }
+    .product-detail-hero > img { max-height: 360px; }
+    .page-shell .section-title { font-size: 1.9rem; }
   }
 </style>

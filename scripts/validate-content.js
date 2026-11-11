@@ -2,7 +2,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const supportedSections = new Set(['hero', 'categories', 'products', 'certificates', 'contact']);
+const supportedSections = new Set(['hero', 'categories', 'products', 'recipes', 'values', 'certificates', 'contact']);
 const required = {
   categories: ['title', 'image', 'alt', 'order'],
   products: ['title', 'category', 'image', 'alt', 'summary', 'order'],
@@ -39,6 +39,11 @@ export function validateContent({ categories, products, articles, sections }) {
     if (!section || !supportedSections.has(section.type)) errors.push(`${label}: unsupported section type "${section?.type ?? ''}"`);
     if (!nonblank(section?.title)) errors.push(`${label}: required field "title" is missing`);
     if (['hero', 'contact'].includes(section?.type) && !nonblank(section.body)) errors.push(`${label}: required field "body" is missing`);
+    if (['recipes', 'values'].includes(section?.type)) {
+      (section.items ?? []).forEach((item, itemIndex) => {
+        if (!nonblank(item?.title)) errors.push(`${label}, item ${itemIndex + 1}: required field "title" is missing`);
+      });
+    }
   });
   if (sections.length === 0) errors.push('homepage sections: at least one section is required');
   return errors;

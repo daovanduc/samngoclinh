@@ -14,11 +14,11 @@ const paragraphs = article.body.split(/\n\s*\n/).filter((paragraph: string) => p
   <main class="page-shell catalog-page">
     <nav class="breadcrumbs" aria-label="Đường dẫn">
       <a href="/">Trang chủ</a><span aria-hidden="true">›</span>
-      <a href="/news/">Nhật ký Ngọc Linh</a><span aria-hidden="true">›</span><span>{article.title}</span>
+      <a href="/news/">Tin tức</a><span aria-hidden="true">›</span><span>{article.title}</span>
     </nav>
-    <article class="content-section article-panel">
+    <article class="article-panel">
       <header class="article-header">
-        <p class="product-category">Nhật ký Ngọc Linh</p>
+        <p class="article-kicker">Nhật ký Ngọc Linh</p>
         <h1>{article.title}</h1>
         <time class="article-date" datetime={article.date}>{formatDate(article.date)}</time>
       </header>
@@ -27,7 +27,7 @@ const paragraphs = article.body.split(/\n\s*\n/).filter((paragraph: string) => p
       <div class="article-body">
         {paragraphs.map((paragraph: string) => <p>{paragraph}</p>)}
       </div>
-      <a class="pill-link article-back" href="/news/">← Tất cả bài viết</a>
+      <a class="product-story-btn article-back" href="/news/">← Tất cả bài viết</a>
     </article>
   </main>
 </SiteLayout>

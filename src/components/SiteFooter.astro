@@ -1,0 +1,42 @@
+---
+// The branded dark footer from the original homepage. Its contact copy comes
+// from the homepage "Store & contact" section so the CMS edits it in one place.
+import page from '../data/pages/products.json';
+
+interface Props { asSection?: boolean }
+const { asSection = false } = Astro.props;
+
+const contact = page.sections.find((section) => section.type === 'contact');
+const title = contact?.title || 'Liên hệ';
+const lines = (contact?.body || '').split('\n').map((line) => line.trim()).filter(Boolean);
+const hotlineLine = lines.find((line) => /\d[\d .]{7,}\d/.test(line));
+const hotline = hotlineLine?.match(/\d[\d .]{7,}\d/)?.[0].replace(/\D/g, '') || '0961851818';
+const tel = `tel:+84${hotline.replace(/^0/, '')}`;
+---
+<footer class="footer" id="contact" data-page-section={asSection ? 'contact' : undefined} aria-labelledby="footer-contact-title">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h2 class="footer-title" id="footer-contact-title">{title}</h2>
+        <div class="footer-contact-lines">
+          {lines.map((line) => <p class="footer-text">{line}</p>)}
+        </div>
+      </div>
+      <div class="footer-section">
+        <h2 class="footer-title">Theo dõi chúng tôi</h2>
+        <div class="social-links">
+          <a href="https://www.facebook.com/thaonguyensamngoclinh" target="_blank" rel="noopener" class="social-link">Facebook</a>
+          <a href={`https://zalo.me/${hotline}`} target="_blank" rel="noopener" class="social-link">Zalo</a>
+        </div>
+      </div>
+      <div class="footer-section">
+        <h2 class="footer-title">Tư vấn &amp; đặt hàng</h2>
+        <p class="footer-text">Gọi cho Thảo Nguyên để được tư vấn sản phẩm phù hợp.</p>
+        <a class="btn btn-secondary footer-call" href={tel}>Gọi {hotlineLine ? hotlineLine.match(/\d[\d .]{7,}\d/)?.[0] : 'ngay'}</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; Thảo Nguyên - Sâm Ngọc Linh. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

@@ -122,6 +122,7 @@ collections:
                 fields:
                   - { label: Section title, name: title, widget: string }
                   - { label: Supporting text, name: body, widget: text }
+                  - { label: Background image (optional), name: image, widget: image, required: false }
               - label: Category cards
                 name: categories
                 widget: object
@@ -134,6 +135,33 @@ collections:
                 fields:
                   - { label: Section title, name: title, widget: string }
                   - { label: Supporting text, name: body, widget: text, required: false }
+              - label: Recipes (Công thức)
+                name: recipes
+                widget: object
+                fields:
+                  - { label: Section title, name: title, widget: string }
+                  - { label: Supporting text, name: body, widget: text, required: false }
+                  - label: Cards
+                    name: items
+                    widget: list
+                    summary: '{{fields.title}}'
+                    fields:
+                      - { label: Title, name: title, widget: string }
+                      - { label: Text, name: body, widget: text, required: false }
+              - label: Brand values (Giá trị cốt lõi)
+                name: values
+                widget: object
+                fields:
+                  - { label: Section title, name: title, widget: string }
+                  - { label: Supporting text, name: body, widget: text, required: false }
+                  - label: Cards
+                    name: items
+                    widget: list
+                    summary: '{{fields.icon}} {{fields.title}}'
+                    fields:
+                      - { label: Icon (emoji), name: icon, widget: string, required: false }
+                      - { label: Title, name: title, widget: string }
+                      - { label: Text, name: body, widget: text, required: false }
               - label: Certificates
                 name: certificates
                 widget: object

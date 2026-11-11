@@ -7,12 +7,15 @@ const formatDate = (date: string) => new Intl.DateTimeFormat('vi-VN', { dateStyl
 <SiteLayout title="Nhật ký Ngọc Linh | Thảo Nguyên" description="Những câu chuyện và thông tin về sâm Ngọc Linh từ Thảo Nguyên.">
   <main class="page-shell catalog-page">
     <nav class="breadcrumbs" aria-label="Đường dẫn">
-      <a href="/">Trang chủ</a><span aria-hidden="true">›</span><span>Nhật ký Ngọc Linh</span>
+      <a href="/">Trang chủ</a><span aria-hidden="true">›</span><span>Tin tức</span>
     </nav>
-    <section class="content-section" aria-labelledby="news-title">
-      <h1 class="section-title" id="news-title">Nhật ký Ngọc Linh</h1>
+    <header class="page-heading">
+      <p class="eyebrow">Tin tức</p>
+      <h1 class="section-title centered" id="news-title">Nhật ký Ngọc Linh</h1>
+    </header>
+    <section aria-labelledby="news-title">
       {articles.length > 0 ? (
-        <div class="product-grid news-grid">
+        <div class="news-grid">
           {articles.map((article) => (
             <article class="news-card">
               {article.image && <img src={article.image} alt="" loading="lazy" />}
@@ -20,12 +23,12 @@ const formatDate = (date: string) => new Intl.DateTimeFormat('vi-VN', { dateStyl
                 <time datetime={article.date}>{formatDate(article.date)}</time>
                 <h2><a href={`/news/${article.slug}/`}>{article.title}</a></h2>
                 <p>{article.summary}</p>
-                <a class="pill-link" href={`/news/${article.slug}/`}>Đọc bài viết</a>
+                <a class="card-action" href={`/news/${article.slug}/`}>Đọc bài viết</a>
               </div>
             </article>
           ))}
         </div>
-      ) : <p class="category-description">Các bài viết sẽ được cập nhật trong thời gian tới.</p>}
+      ) : <p class="empty-state">Các bài viết sẽ được cập nhật trong thời gian tới.</p>}
     </section>
   </main>
 </SiteLayout>

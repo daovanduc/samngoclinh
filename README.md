@@ -55,7 +55,7 @@ Astro reads the content files and generates plain HTML pages:
 - `src/data/pages/products.json` contains the ordered homepage sections. The order in the `sections` array is the order visitors see.
 - `public/assets/images/` contains site images. Images uploaded through the CMS go under `public/assets/images/uploads/`.
 
-Product detail pages show optional product fields only when they have content. Related products are selected from the same category. The homepage section editor supports the designed section types (hero, categories, products, certificates, and contact); it does not offer freeform page layout controls.
+Product detail pages show optional product fields only when they have content. Related products are selected from the same category. The homepage section editor supports the designed section types (hero, categories, products, recipes, brand values, certificates, and contact); it does not offer freeform page layout controls. All pages use the original branded homepage design: markup classes from the old `index.html` and its stylesheet, copied to `public/assets/css/product-storytelling.css`. Category descriptions feed the alternating story blocks on the homepage.
 
 ## Change content
 

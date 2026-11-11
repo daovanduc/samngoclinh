@@ -20,7 +20,7 @@ for (const viewport of [
     for (const route of routes) {
       const response = await page.goto(route);
       expect(response?.status(), `route should render: ${route}`).toBe(200);
-      if (viewport.width <= 992) {
+      if (viewport.width <= 768) {
         const menuToggle = page.getByRole('button', { name: /menu/i });
         await expect(menuToggle).toHaveAttribute('aria-expanded', 'false');
         await menuToggle.click();

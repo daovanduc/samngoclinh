@@ -1,19 +1,139 @@
 ---
+// Homepage. Each CMS section renders with the markup and classes of the
+// original branded homepage (index.html) so product-storytelling.css applies.
 import SiteLayout from '../layouts/SiteLayout.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import { categories, certificates, products } from '../data/catalog';
 import page from '../data/pages/products.json';
-const known = new Set(['hero', 'categories', 'products', 'certificates', 'contact']);
-const sections = page.sections.filter((section) => known.has(section.type));
+
+type Item = { icon?: string; title: string; body?: string };
+type Section = { type: string; title: string; body?: string; image?: string; items?: Item[] };
+
+const known = new Set(['hero', 'categories', 'products', 'recipes', 'values', 'certificates', 'contact']);
+const sections = (page.sections as Section[]).filter((section) => known.has(section.type));
+const hasContact = sections.some((section) => section.type === 'contact');
+const hero = sections.find((section) => section.type === 'hero');
+const categoryTitle = (slug: string) => categories.find((category) => category.slug === slug)?.title;
+const delay = (index: number) => String(50 + (index % 3) * 50);
 ---
-<SiteLayout title="Thảo Nguyên – Sâm Ngọc Linh | Sản phẩm" description="Khám phá các sản phẩm Sâm Ngọc Linh và dược liệu quý Thảo Nguyên.">
-  <main class="page-shell">
-    {sections.map((section) => <section data-page-section={section.type} class:list={[section.type === 'hero' ? 'hero' : 'content-section', section.type === 'contact' && 'contact-panel']} id={section.type === 'categories' ? 'categories' : section.type === 'products' || section.type === 'hero' ? (section.type === 'hero' ? 'about' : 'products') : section.type} aria-label={section.title}>
-      {section.type === 'hero' && <div><h1 id="hero-title">{section.title}</h1><p>{section.body}</p></div>}
-      {section.type === 'categories' && <><h2 class="section-title">{section.title}</h2>{section.body && <p class="section-description">{section.body}</p>}<div class="category-grid">{categories.map((category) => <article class="category-card"><img src={category.image} alt={category.alt} loading="lazy"/><h3>{category.title}</h3><a class="pill-link" href={`/products/categories/${category.slug}/`} aria-label={`Xem sản phẩm ${category.title}`}>Xem thêm</a></article>)}</div></>}
-      {section.type === 'products' && <><h2 class="section-title">{section.title}</h2>{section.body && <p class="section-description">{section.body}</p>}<div class="product-grid">{products.map((product) => <article class="product-card"><img src={product.image} alt={product.alt} loading="lazy"/><p>{categories.find((category) => category.slug === product.category)?.title}</p><h3>{product.title}</h3><p>{product.summary}</p><a class="pill-link" href={`/products/${product.slug}/`} aria-label={`Xem chi tiết ${product.title}`}>Xem thêm</a></article>)}</div></>}
-      {section.type === 'certificates' && <><h2 class="section-title">{section.title}</h2>{section.body && <p class="section-description">{section.body}</p>}<div class="certificate-grid">{certificates.map((item) => <div class="certificate-placeholder">{item}<br/>Hình ảnh sẽ được cập nhật</div>)}</div></>}
-      {section.type === 'contact' && <><div><h2>{section.title}</h2><p>{section.body.split('\n').map((line) => <>{line}<br/></>)}</p></div><img class="contact-logo" src="/assets/images/logo.png" alt="Thảo Nguyên – Sâm Ngọc Linh" loading="lazy"/></>}
-    </section>)}
+<SiteLayout
+  title="Thảo Nguyên - Sâm Ngọc Linh | Trang chủ"
+  description={hero?.body || 'Sâm Ngọc Linh và dược liệu quý từ núi rừng Việt Nam.'}
+  hero={sections[0]?.type === 'hero'}
+  footer={!hasContact}
+>
+  <main>
+    {sections.map((section) => {
+      if (section.type === 'hero') return (
+        <section class="hero" id="hero" data-page-section="hero" style={section.image ? `background-image: url('${section.image}')` : undefined}>
+          <div class="hero-overlay"></div>
+          <div class="hero-content hero-content-right" data-aos="fade-scale">
+            <h1 class="hero-title">{section.title}</h1>
+            {section.body && <p class="hero-subtitle">{section.body}</p>}
+          </div>
+          <a class="scroll-indicator" href="#about" aria-label="Cuộn xuống">
+            <span>Cuộn xuống</span>
+            <div class="scroll-arrow"></div>
+          </a>
+        </section>
+      );
+
+      if (section.type === 'categories') return (
+        <div class="story-group" id="about" data-page-section="categories">
+          <div class="story-heading product-story-beige">
+            <h2 class="section-title centered">{section.title}</h2>
+            {section.body && <p class="section-intro centered section-description">{section.body}</p>}
+          </div>
+          {categories.map((category, index) => {
+            const even = index % 2 === 0;
+            return (
+              <section
+                class:list={['product-story-section', even ? 'product-story-beige' : 'product-story-white']}
+                id={index === categories.length - 1 ? 'categories' : undefined}
+                data-aos={even ? 'fade-right' : 'fade-left'}
+                aria-labelledby={`category-${category.slug}`}
+              >
+                <div class:list={['product-story-container', !even && 'product-story-reverse']}>
+                  <div class="product-story-image" data-aos={even ? 'slide-left' : 'slide-right'} data-aos-delay="100">
+                    <img src={category.image} alt={category.alt} class="product-story-img" loading="lazy" />
+                  </div>
+                  <div class="product-story-content">
+                    <h3 class="product-story-title" id={`category-${category.slug}`}>{category.title}</h3>
+                    <div class="product-story-logo"><span class="logo-text">Thảo Nguyên - Sâm Ngọc Linh</span></div>
+                    {category.description && <p class="product-story-description">{category.description}</p>}
+                    <a href={`/products/categories/${category.slug}/`} class="product-story-btn" aria-label={`Khám phá ${category.title}`}>Khám phá &gt;&gt;</a>
+                  </div>
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      );
+
+      if (section.type === 'products') return (
+        <section class="featured-products" id="products" data-page-section="products">
+          <div class="container">
+            <h2 class="section-title centered">{section.title}</h2>
+            {section.body && <p class="section-intro centered section-description">{section.body}</p>}
+            <div class="products-grid">
+              {products.map((product, index) => (
+                <article class="product-card" data-aos="slide-up" data-aos-delay={delay(index)}>
+                  <a class="product-card-link" href={`/products/${product.slug}/`} aria-label={product.title}>
+                    <div class="product-image"><img src={product.image} alt={product.alt} class="product-img" loading="lazy" /></div>
+                    <div class="product-info">
+                      <p class="product-meta">{categoryTitle(product.category)}</p>
+                      <h3 class="product-name">{product.title}</h3>
+                      <p class="product-description">{product.summary}</p>
+                    </div>
+                  </a>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+
+      if (section.type === 'recipes') return (
+        <section class="recipes-section" id="recipes" data-page-section="recipes">
+          <div class="container">
+            <h2 class="section-title centered">{section.title}</h2>
+            {section.body && <p class="section-intro centered section-description">{section.body}</p>}
+            <div class="recipes-grid">
+              {(section.items || []).map((item, index) => (
+                <div class="recipe-card" data-aos="slide-up" data-aos-delay={String((index + 1) * 100)}>
+                  <h3 class="recipe-title">{item.title}</h3>
+                  {item.body && <p class="recipe-description">{item.body}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      );
+
+      if (section.type === 'values' || section.type === 'certificates') {
+        const items: Item[] = section.type === 'values'
+          ? section.items || []
+          : certificates.map((title) => ({ icon: '🏅', title }));
+        return (
+          <section class="brand-values" id={section.type} data-page-section={section.type}>
+            <div class="container">
+              <h2 class="section-title centered">{section.title}</h2>
+              {section.body && <p class="section-intro centered section-description">{section.body}</p>}
+              <div class="values-grid">
+                {items.map((item, index) => (
+                  <div class="value-card" data-aos={index % 2 ? 'slide-left' : 'slide-right'} data-aos-delay={String((index + 1) * 100)}>
+                    {item.icon && <div class="value-icon" aria-hidden="true">{item.icon}</div>}
+                    <h3 class="value-title">{item.title}</h3>
+                    {item.body && <p class="value-description">{item.body}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        );
+      }
+
+      if (section.type === 'contact') return <SiteFooter asSection />;
+    })}
   </main>
-  <footer>© Thảo Nguyên – Sâm Ngọc Linh</footer>
 </SiteLayout>

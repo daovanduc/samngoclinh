@@ -39,7 +39,7 @@ export const publishedArticles = records<Article>('news')
 
 export const publishedNewsCount = publishedArticles.length;
 
-const knownSections = new Set(['hero', 'categories', 'products', 'certificates', 'contact']);
+const knownSections = new Set(['hero', 'categories', 'products', 'recipes', 'values', 'certificates', 'contact']);
 export const homepageSections: Section[] = (
   JSON.parse(readFileSync(join(dataDir, 'pages', 'products.json'), 'utf8')).sections as Section[]
 ).filter((section) => knownSections.has(section.type));

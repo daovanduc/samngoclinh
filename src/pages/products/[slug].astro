@@ -1,5 +1,6 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import ProductCard from '../../components/ProductCard.astro';
 import { categories, products, productsForCategory } from '../../data/catalog';
 
 export function getStaticPaths() {
@@ -17,15 +18,15 @@ const relatedProducts = productsForCategory(product.category)
     <nav class="breadcrumbs" aria-label="Đường dẫn">
       <a href="/">Trang chủ</a><span aria-hidden="true">›</span><a href="/products/">Sản phẩm</a><span aria-hidden="true">›</span><a href={`/products/categories/${category.slug}/`}>{category.title}</a><span aria-hidden="true">›</span><span>{product.title}</span>
     </nav>
-    <article class="content-section product-detail">
+    <article class="product-detail">
       <div class="product-detail-hero">
         <img src={product.image} alt={product.alt} />
         <div>
           <p class="product-category">{category.title}</p>
           <h1>{product.title}</h1>
           <p class="product-size">{product.summary}</p>
-          {product.description && <p class="product-description">{product.description}</p>}
-          <a class="pill-link contact-button" href="tel:+84961851818">Liên hệ</a>
+          {product.description && <p class="product-lead">{product.description}</p>}
+          <a class="product-story-btn contact-button" href="tel:+84961851818">Liên hệ tư vấn</a>
         </div>
       </div>
       {product.product_info && <section class="product-detail-copy"><h2>Thông tin sản phẩm</h2><div class="product-detail-text">{product.product_info}</div></section>}
@@ -34,19 +35,10 @@ const relatedProducts = productsForCategory(product.category)
       {product.directions && <section class="product-detail-copy"><h2>Hướng dẫn sử dụng</h2><div class="product-detail-text">{product.directions}</div></section>}
       {product.usage_notes && <section class="product-detail-copy"><h2>Lưu ý khi sử dụng</h2><div class="product-detail-text">{product.usage_notes}</div></section>}
     </article>
-    {relatedProducts.length > 0 && <section class="content-section related-products" aria-labelledby="related-products-title">
-      <h2 class="section-title" id="related-products-title">Sản phẩm cùng danh mục</h2>
+    {relatedProducts.length > 0 && <section class="related-products" aria-labelledby="related-products-title">
+      <h2 class="section-title centered" id="related-products-title">Sản phẩm cùng danh mục</h2>
       <div class="product-grid">
-        {relatedProducts.map((relatedProduct) => (
-          <article class="product-card">
-            <a class="product-card-link" href={`/products/${relatedProduct.slug}/`} aria-label={relatedProduct.title}>
-              <img src={relatedProduct.image} alt={relatedProduct.alt} loading="lazy" />
-              <h3>{relatedProduct.title}</h3>
-              <p>{relatedProduct.summary}</p>
-            </a>
-            <a class="pill-link" href={`/products/${relatedProduct.slug}/`}>Xem sản phẩm</a>
-          </article>
-        ))}
+        {relatedProducts.map((relatedProduct) => <ProductCard product={relatedProduct} meta={category.title} level="h3" action="Xem sản phẩm" />)}
       </div>
     </section>}
   </main>
