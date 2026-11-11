@@ -1,0 +1,30 @@
+---
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { categories, products } from '../../data/catalog';
+---
+<SiteLayout title="Tất cả sản phẩm | Thảo Nguyên" description="Danh mục sản phẩm Thảo Nguyên – Sâm Ngọc Linh.">
+  <main class="page-shell catalog-page">
+    <nav class="breadcrumbs" aria-label="Đường dẫn">
+      <a href="/">Trang chủ</a><span aria-hidden="true">›</span><span>Sản phẩm</span>
+    </nav>
+    <nav class="category-navigation" aria-label="Danh mục sản phẩm">
+      {categories.map((category) => <a href={`/products/categories/${category.slug}/`}>{category.title}</a>)}
+    </nav>
+    <section class="content-section" aria-labelledby="all-products-title">
+      <h1 class="section-title" id="all-products-title">Tất cả sản phẩm</h1>
+      <div class="product-grid">
+        {products.map((product) => (
+          <article class="product-card">
+            <a class="product-card-link" href={`/products/${product.slug}/`} aria-label={product.title}>
+              <img src={product.image} alt={product.alt} loading="lazy" />
+              <p>{categories.find((category) => category.slug === product.category)?.title}</p>
+              <h2>{product.title}</h2>
+              <p>{product.summary}</p>
+            </a>
+            <a class="pill-link" href={`/products/${product.slug}/`}>Xem thêm</a>
+          </article>
+        ))}
+      </div>
+    </section>
+  </main>
+</SiteLayout>
