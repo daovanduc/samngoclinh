@@ -4,7 +4,7 @@ The site is configured for Astro static output. The repository build command is 
 
 ## Current deployment
 
-The Cloudflare Pages project `samngoclinh` is connected to `daovanduc/samngoclinh`. Its production branch is `codex/implement-13`, with the Astro preset, build command `npm run build`, and output directory `dist`. The public site is <https://samngoclinh.pages.dev>.
+The Cloudflare Pages project `samngoclinh` is connected to `daovanduc/samngoclinh`. Its production branch is `prototype/designed-section-editor` (the repository default branch), with the Astro preset, build command `npm run build`, and output directory `dist`. The public site is <https://samngoclinh.pages.dev>.
 
 Cloudflare Pages reads the Node version from `.node-version`. If this production branch changes after the implementation PR is merged, update the Pages production branch and `backend.branch` in `public/admin/config.yml` together.
 

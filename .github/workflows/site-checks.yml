@@ -3,9 +3,9 @@ name: Site checks
 on:
   pull_request:
   push:
-    # The default branch plus the Cloudflare Pages production branch, which
+    # The default branch is also the Cloudflare Pages production branch and
     # receives Decap CMS commits directly.
-    branches: [prototype/designed-section-editor, codex/implement-13]
+    branches: [prototype/designed-section-editor]
 
 permissions:
   contents: read

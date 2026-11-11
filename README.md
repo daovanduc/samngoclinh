@@ -27,14 +27,14 @@ Open <http://localhost:4321> in your browser. Stop the local server with `Ctrl+C
 If you do not have the project folder yet:
 
 ```powershell
-git clone --branch codex/implement-13 --single-branch https://github.com/daovanduc/samngoclinh.git
+git clone https://github.com/daovanduc/samngoclinh.git
 cd samngoclinh
 $nodeInstallationPath = 'C:\Users\Admin\AppData\Roaming\fnm\node-versions\v22.23.4\installation'
 & (Join-Path $nodeInstallationPath 'npm.cmd') ci
 & (Join-Path $nodeInstallationPath 'npm.cmd') run dev
 ```
 
-`npm ci` requires the `package-lock.json` in the implementation branch. If npm reports that the lockfile is missing, check that you are in the `samngoclinh` folder on `codex/implement-13` before running it:
+`npm ci` requires the `package-lock.json` on the default branch. If npm reports that the lockfile is missing, check that you are in the `samngoclinh` folder on `prototype/designed-section-editor` before running it:
 
 ```powershell
 git branch --show-current
@@ -43,7 +43,7 @@ Test-Path package-lock.json
 
 If `npm ci` fails on Windows with `EPERM` while unlinking a Rollup `.node` file, stop any `npm run dev` or `npm run preview` server with `Ctrl+C` and close other terminal sessions running this project. Then reopen PowerShell, select Node.js 22.23.4 as above, and run `npm ci` again. The file is a native dependency that Windows cannot replace while another process has it open.
 
-The implementation branch is `codex/implement-13`; its changes are in [PR #17](https://github.com/daovanduc/samngoclinh/pull/17). The repository's default branch does not include this work until the PR is merged.
+All work lives on the default branch `prototype/designed-section-editor` (the implementation was merged in [PR #17](https://github.com/daovanduc/samngoclinh/pull/17)).
 
 ## How the site is built
 
@@ -59,7 +59,7 @@ Product detail pages show optional product fields only when they have content. R
 
 ## Change content
 
-Open <https://samngoclinh.pages.dev/admin/> on the deployed site, sign in, edit products/categories/news or the homepage sections, and save. Decap commits changes to GitHub on `codex/implement-13`; Cloudflare Pages automatically builds that production branch.
+Open <https://samngoclinh.pages.dev/admin/> on the deployed site, sign in, edit products/categories/news or the homepage sections, and save. Decap commits changes to GitHub on `prototype/designed-section-editor`; Cloudflare Pages automatically builds that production branch.
 
 The CMS configuration is in `public/admin/config.yml`. Its Turbo Site ID is set. In the Decap Turbo dashboard, allow the deployed admin origin `https://samngoclinh.pages.dev` for hosted login. For setup details, see:
 
@@ -88,4 +88,4 @@ To run the browser suite locally, install Chromium once and run:
 
 ## Publishing status
 
-The live site is <https://samngoclinh.pages.dev>. Cloudflare Pages builds `codex/implement-13` with `npm run build` and publishes the `dist` directory. Decap CMS writes content to the same branch. Local admin access also needs `http://127.0.0.1:4322` in the Turbo site's Admin interface URL list.
+The live site is <https://samngoclinh.pages.dev>. Cloudflare Pages builds `prototype/designed-section-editor` with `npm run build` and publishes the `dist` directory. Decap CMS writes content to the same branch. Local admin access also needs `http://127.0.0.1:4322` in the Turbo site's Admin interface URL list.

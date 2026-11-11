@@ -4,7 +4,7 @@ site_url: https://samngoclinh.pages.dev
 backend:
   name: turbo-github
   turbo_site_id: dd587012-cf5f-4b4a-847b-33237db94947
-  branch: codex/implement-13
+  branch: prototype/designed-section-editor
 
 media_folder: public/assets/images/uploads
 public_folder: /assets/images/uploads
