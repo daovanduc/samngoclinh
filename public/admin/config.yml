@@ -123,6 +123,8 @@ collections:
                   - { label: Section title, name: title, widget: string }
                   - { label: Supporting text, name: body, widget: text }
                   - { label: Background image (optional), name: image, widget: image, required: false }
+                  - { label: Button text, name: cta_label, widget: string, required: false, default: Xem sản phẩm }
+                  - { label: Button link, name: cta_link, widget: string, required: false, default: /products/, hint: 'Đường dẫn trong site, ví dụ /products/ hoặc /products/categories/sam-ngoc-linh/' }
               - label: Category cards
                 name: categories
                 widget: object

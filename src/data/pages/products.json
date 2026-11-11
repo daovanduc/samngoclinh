@@ -3,7 +3,9 @@
     {
       "type": "hero",
       "title": "Tinh hoa từ núi rừng Ngọc Linh",
-      "body": "Thảo Nguyên – Sâm Ngọc Linh"
+      "body": "Mỗi sản phẩm là câu chuyện về sự tinh khiết, được nuôi dưỡng bởi đất mẹ Ngọc Linh và chắt lọc qua thời gian.",
+      "cta_label": "Xem sản phẩm",
+      "cta_link": "/products/"
     },
     {
       "type": "categories",
@@ -17,45 +19,45 @@
     },
     {
       "type": "recipes",
-      "title": "Công Thức",
+      "title": "Công thức",
       "body": "Khám phá những cách thưởng thức sản phẩm của chúng tôi, từ những công thức truyền thống đến những cách pha chế hiện đại, mỗi cách đều mang lại một trải nghiệm độc đáo.",
       "items": [
         {
-          "title": "Công Thức Truyền Thống",
+          "title": "Công thức truyền thống",
           "body": "Các cách sử dụng đã được truyền qua nhiều thế hệ, giữ nguyên hương vị và giá trị của dược liệu."
         },
         {
-          "title": "Công Thức Hiện Đại",
+          "title": "Công thức hiện đại",
           "body": "Những cách pha chế mới, kết hợp với các nguyên liệu hiện đại để tạo nên trải nghiệm độc đáo."
         },
         {
-          "title": "Lối Sống Lành Mạnh",
+          "title": "Lối sống lành mạnh",
           "body": "Cách tích hợp sản phẩm vào cuộc sống hàng ngày một cách tự nhiên và bền vững."
         }
       ]
     },
     {
       "type": "values",
-      "title": "Giá Trị Cốt Lõi",
+      "title": "Giá trị cốt lõi",
       "items": [
         {
           "icon": "⭐",
-          "title": "Chất Lượng",
+          "title": "Chất lượng",
           "body": "Mỗi sản phẩm đều được chọn lọc kỹ càng, đảm bảo tiêu chuẩn chất lượng cao nhất"
         },
         {
           "icon": "🌿",
-          "title": "Tự Nhiên",
+          "title": "Tự nhiên",
           "body": "Trồng và thu hoạch hoàn toàn tự nhiên, không can thiệp hóa chất"
         },
         {
           "icon": "🏆",
-          "title": "Được Chứng Nhận",
+          "title": "Được chứng nhận",
           "body": "Giấy kiểm định từ các tổ chức uy tín, đảm bảo an toàn và chất lượng"
         },
         {
           "icon": "❤️",
-          "title": "Nguồn Gốc",
+          "title": "Nguồn gốc",
           "body": "Dược liệu tinh tuyển từ vùng núi Ngọc Linh, nơi thiên nhiên còn nguyên vẹn"
         }
       ]

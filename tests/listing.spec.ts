@@ -105,7 +105,8 @@ for (const viewport of [
     if (sectionTitle('products')) {
       await expect(page.locator('#products .product-card')).toHaveCount(publishedProducts.length);
       const columns = await page.locator('#products .products-grid').evaluate((grid) => getComputedStyle(grid).gridTemplateColumns.split(' ').length);
-      expect(columns).toBe(viewport.columns);
+      // Phones show two compact cards per row on the homepage.
+      expect(columns).toBe(viewport.width <= 768 ? 2 : viewport.columns);
     }
     const contact = homepageSections.find((section) => section.type === 'contact');
     if (contact?.body) await expect(page.locator('#contact')).toContainText(contact.body.split('\n').at(-1)!.trim());

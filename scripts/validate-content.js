@@ -39,6 +39,7 @@ export function validateContent({ categories, products, articles, sections }) {
     if (!section || !supportedSections.has(section.type)) errors.push(`${label}: unsupported section type "${section?.type ?? ''}"`);
     if (!nonblank(section?.title)) errors.push(`${label}: required field "title" is missing`);
     if (['hero', 'contact'].includes(section?.type) && !nonblank(section.body)) errors.push(`${label}: required field "body" is missing`);
+    if (section?.type === 'hero' && nonblank(section.cta_link) && !/^(\/|https:\/\/)/.test(section.cta_link)) errors.push(`${label}: button link must start with / or https://`);
     if (['recipes', 'values'].includes(section?.type)) {
       (section.items ?? []).forEach((item, itemIndex) => {
         if (!nonblank(item?.title)) errors.push(`${label}, item ${itemIndex + 1}: required field "title" is missing`);

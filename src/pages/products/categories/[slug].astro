@@ -10,7 +10,7 @@ export function getStaticPaths() {
 const { category } = Astro.props;
 const categoryProducts = productsForCategory(category.slug);
 ---
-<SiteLayout title={`${category.title} | Thảo Nguyên`} description={category.description || `Sản phẩm thuộc danh mục ${category.title}.`}>
+<SiteLayout title={`${category.title} | Thảo Nguyên`} description={category.description || `Sản phẩm thuộc danh mục ${category.title}.`} image={category.image}>
   <main class="page-shell catalog-page">
     <nav class="breadcrumbs" aria-label="Đường dẫn">
       <a href="/">Trang chủ</a><span aria-hidden="true">›</span><a href="/products/">Sản phẩm</a><span aria-hidden="true">›</span><span>{category.title}</span>

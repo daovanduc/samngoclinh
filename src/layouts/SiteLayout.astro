@@ -5,14 +5,22 @@
 // /assets/css/product-storytelling.css (copied from the original site);
 // the styles below only cover pages the original design did not have.
 import SiteFooter from '../components/SiteFooter.astro';
+import ContactButtons from '../components/ContactButtons.astro';
 
-interface Props { title?: string; description?: string; hero?: boolean; footer?: boolean }
+interface Props { title?: string; description?: string; hero?: boolean; footer?: boolean; image?: string; type?: 'website' | 'article' | 'product' }
 const {
   title = 'Thảo Nguyên – Sâm Ngọc Linh',
   description = 'Sâm Ngọc Linh và dược liệu quý từ núi rừng Việt Nam.',
   hero = false,
   footer = true,
+  image = '/assets/images/hero-background.jpg',
+  type = 'website',
 } = Astro.props;
+
+// Link previews for Zalo / Facebook / Messenger need absolute URLs.
+const site = Astro.site ?? new URL('https://samngoclinh.pages.dev');
+const canonical = new URL(Astro.url.pathname, site).toString();
+const shareImage = new URL(image, site).toString();
 
 const leftLinks = [
   { href: '/#about', label: 'Giới thiệu' },
@@ -32,6 +40,18 @@ const rightLinks = [
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0d2818" />
     <title>{title}</title>
+    <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content="Thảo Nguyên – Sâm Ngọc Linh" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:type" content={type === 'article' ? 'article' : 'website'} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={shareImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={shareImage} />
     <link rel="icon" href="/assets/images/logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
@@ -65,6 +85,7 @@ const rightLinks = [
     </header>
     <slot />
     {footer && <SiteFooter />}
+    <ContactButtons variant="bar" />
     <script>
       document.documentElement.classList.add('js-enabled');
 
@@ -157,6 +178,34 @@ const rightLinks = [
   .featured-products .product-meta { margin: 0 0 .5rem; color: var(--primary-gold-dark); font-size: .72rem; font-weight: 600; letter-spacing: .15em; text-transform: uppercase; }
   .no-hero main:not(.page-shell) { padding-top: 90px; }
 
+  /* Hero call to action */
+  .hero-content { max-width: 780px; }
+  .hero-title { font-size: clamp(2.4rem, 4.6vw, 4rem); text-wrap: balance; }
+  .hero-subtitle { text-wrap: pretty; }
+  .hero-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 14px; margin-top: 2.25rem; }
+  .hero-btn { display: inline-flex; align-items: center; justify-content: center; min-height: 50px; padding: 14px 32px; border: 2px solid var(--primary-gold); font-size: .85rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; text-decoration: none; transition: var(--transition); }
+  .hero-btn--primary { background: var(--primary-gold); color: var(--primary-black); }
+  .hero-btn--primary:hover { background: var(--primary-gold-light); border-color: var(--primary-gold-light); }
+  .hero-btn--ghost { color: #fff; background: rgba(10, 10, 10, .25); }
+  .hero-btn--ghost:hover { background: rgba(201, 162, 39, .18); }
+
+  /* Call + Zalo */
+  .contact-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .contact-action { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; padding: 12px 26px; font-size: .85rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; text-decoration: none; transition: var(--transition); }
+  .contact-action--call { background: var(--primary-green); border: 2px solid var(--primary-green); color: #fff; }
+  .contact-action--call:hover { background: var(--primary-green-dark); }
+  .contact-action--zalo { background: #fff; border: 2px solid #0068ff; color: #0068ff; }
+  .contact-action--zalo:hover { background: #0068ff; color: #fff; }
+  .zalo-mark { display: inline-grid; place-items: center; min-width: 34px; height: 22px; padding: 0 5px; border-radius: 6px; background: #0068ff; color: #fff; font-size: .62rem; font-weight: 700; letter-spacing: 0; text-transform: none; }
+  .contact-action--zalo:hover .zalo-mark { background: #fff; color: #0068ff; }
+  .contact-actions--bar { display: none; }
+  @media (max-width: 768px) {
+    .contact-actions--bar { position: fixed; z-index: 990; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: rgba(10, 10, 10, .96); border-top: 1px solid rgba(201, 162, 39, .4); box-shadow: 0 -6px 24px rgba(0, 0, 0, .25); }
+    .contact-actions--bar .contact-action { min-height: 46px; padding: 10px; font-size: .78rem; }
+    .contact-actions--bar .contact-action + .contact-action { margin-left: 8px; }
+    body { padding-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  }
+
   /* Footer additions */
   .footer .footer-title { font-size: 1.1rem; }
   .footer-contact-lines .footer-text { margin-bottom: .35rem; }
@@ -195,6 +244,7 @@ const rightLinks = [
   .product-size { margin: 0 0 1.5rem; color: var(--text-light); font-size: 1.05rem; }
   .product-lead { margin: 0 0 2rem; line-height: 1.9; font-weight: 300; }
   .page-shell .product-story-btn { opacity: 1; transform: none; }
+  .product-contact-note { margin: 0 0 1rem; color: var(--text-light); font-size: .95rem; }
   .product-detail-copy { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid rgba(201, 162, 39, .3); }
   .product-detail-copy h2 { margin: 0 0 1rem; color: var(--primary-green); font-size: 1.3rem; font-weight: 500; letter-spacing: .03em; }
   .product-detail-text, .product-detail-copy ul { line-height: 1.9; font-weight: 300; white-space: pre-line; }
@@ -227,6 +277,32 @@ const rightLinks = [
     .product-grid, .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.75rem; }
   }
   @media (max-width: 768px) {
+    .hero-actions { justify-content: center; }
+    .hero-btn { flex: 1 1 220px; }
+    /* Shorter homepage on phones: compact story blocks and two-up cards. */
+    .story-heading { padding-top: 56px; }
+    .story-group .product-story-beige, .story-group .product-story-white { padding: 28px 0; }
+    .story-group .product-story-image { height: 220px; min-height: 220px; padding: 10px; }
+    .story-group .product-story-image { background: var(--primary-green-dark); border-radius: 14px; }
+    .story-group .product-story-image .product-story-img { width: 100%; height: 100%; object-fit: contain; }
+    .story-group .product-story-content { padding: 1.25rem 1.25rem .5rem; }
+    .story-group .product-story-title { font-size: 1.45rem; margin-bottom: .5rem; }
+    .story-group .product-story-logo { margin-bottom: .75rem; }
+    .story-group .product-story-description { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; font-size: .95rem; margin-bottom: 1.25rem; }
+    .featured-products, .recipes-section, .brand-values { padding: 56px 0; }
+    .featured-products .products-grid, .brand-values .values-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 0 4px; }
+    .featured-products .product-card { padding: 8px; border-radius: 14px; }
+    .featured-products .product-image { height: 150px; border-radius: 10px; }
+    .featured-products .product-info { padding: .75rem .25rem .25rem; }
+    .featured-products .product-name { font-size: .92rem; line-height: 1.35; margin-bottom: .35rem; }
+    .featured-products .product-description { font-size: .8rem; line-height: 1.5; }
+    .featured-products .product-meta { font-size: .62rem; letter-spacing: .1em; }
+    .brand-values .value-card { padding: 1.25rem .75rem; }
+    .brand-values .value-icon { font-size: 2rem; margin-bottom: .5rem; }
+    .brand-values .value-title { font-size: 1rem; }
+    .brand-values .value-description { font-size: .82rem; line-height: 1.55; }
+    .recipes-grid { gap: 1rem; }
+    .recipe-card { padding: 1.5rem 1.25rem; }
     .page-shell { padding-top: 110px; }
     .product-grid, .news-grid { grid-template-columns: minmax(0, 1fr); }
     .product-detail-hero { grid-template-columns: 1fr; }

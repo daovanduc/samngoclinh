@@ -1,6 +1,7 @@
 ---
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import ProductCard from '../../components/ProductCard.astro';
+import ContactButtons from '../../components/ContactButtons.astro';
 import { categories, products, productsForCategory } from '../../data/catalog';
 
 export function getStaticPaths() {
@@ -13,7 +14,7 @@ const relatedProducts = productsForCategory(product.category)
   .filter((item) => item.slug !== product.slug)
   .slice(0, 3);
 ---
-<SiteLayout title={`${product.title} | Thảo Nguyên`} description={product.description || `${product.title} – ${product.summary}`}>
+<SiteLayout title={`${product.title} | Thảo Nguyên`} description={product.description || `${product.title} – ${product.summary}`} image={product.image} type="product">
   <main class="page-shell catalog-page">
     <nav class="breadcrumbs" aria-label="Đường dẫn">
       <a href="/">Trang chủ</a><span aria-hidden="true">›</span><a href="/products/">Sản phẩm</a><span aria-hidden="true">›</span><a href={`/products/categories/${category.slug}/`}>{category.title}</a><span aria-hidden="true">›</span><span>{product.title}</span>
@@ -26,7 +27,8 @@ const relatedProducts = productsForCategory(product.category)
           <h1>{product.title}</h1>
           <p class="product-size">{product.summary}</p>
           {product.description && <p class="product-lead">{product.description}</p>}
-          <a class="product-story-btn contact-button" href="tel:+84961851818">Liên hệ tư vấn</a>
+          <p class="product-contact-note">Liên hệ để được tư vấn và báo giá.</p>
+          <ContactButtons />
         </div>
       </div>
       {product.product_info && <section class="product-detail-copy"><h2>Thông tin sản phẩm</h2><div class="product-detail-text">{product.product_info}</div></section>}

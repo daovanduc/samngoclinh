@@ -57,6 +57,8 @@ Astro reads the content files and generates plain HTML pages:
 
 Product detail pages show optional product fields only when they have content. Related products are selected from the same category. The homepage section editor supports the designed section types (hero, categories, products, recipes, brand values, certificates, and contact); it does not offer freeform page layout controls. All pages use the original branded homepage design: markup classes from the old `index.html` and its stylesheet, copied to `public/assets/css/product-storytelling.css`. Category descriptions feed the alternating story blocks on the homepage.
 
+Images uploaded in the CMS are committed to `public/assets/images/uploads`. The build (`scripts/optimize-images.js`) shrinks every image in the generated site to at most 1600 px wide and recompresses it, so editors can upload phone photos directly; originals in Git are unchanged. The hotline and Zalo links (footer, product pages, the fixed call/Zalo bar on phones) are read from the phone number in the homepage "Store & contact" section. Every page publishes Open Graph tags so links shared on Zalo or Facebook show the page's image and description.
+
 ## Change content
 
 Open <https://samngoclinh.pages.dev/admin/> on the deployed site, sign in, edit products/categories/news or the homepage sections, and save. Decap commits changes to GitHub on `prototype/designed-section-editor`; Cloudflare Pages automatically builds that production branch.

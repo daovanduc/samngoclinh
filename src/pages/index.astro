@@ -5,9 +5,10 @@ import SiteLayout from '../layouts/SiteLayout.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { categories, certificates, products } from '../data/catalog';
 import page from '../data/pages/products.json';
+import { hotline } from '../data/contact';
 
 type Item = { icon?: string; title: string; body?: string };
-type Section = { type: string; title: string; body?: string; image?: string; items?: Item[] };
+type Section = { type: string; title: string; body?: string; image?: string; items?: Item[]; cta_label?: string; cta_link?: string };
 
 const known = new Set(['hero', 'categories', 'products', 'recipes', 'values', 'certificates', 'contact']);
 const sections = (page.sections as Section[]).filter((section) => known.has(section.type));
@@ -20,6 +21,7 @@ const delay = (index: number) => String(50 + (index % 3) * 50);
   title="Thảo Nguyên - Sâm Ngọc Linh | Trang chủ"
   description={hero?.body || 'Sâm Ngọc Linh và dược liệu quý từ núi rừng Việt Nam.'}
   hero={sections[0]?.type === 'hero'}
+  image={hero?.image || undefined}
   footer={!hasContact}
 >
   <main>
@@ -30,6 +32,10 @@ const delay = (index: number) => String(50 + (index % 3) * 50);
           <div class="hero-content hero-content-right" data-aos="fade-scale">
             <h1 class="hero-title">{section.title}</h1>
             {section.body && <p class="hero-subtitle">{section.body}</p>}
+            <div class="hero-actions">
+              <a class="hero-btn hero-btn--primary" href={section.cta_link || '/products/'}>{section.cta_label || 'Xem sản phẩm'}</a>
+              <a class="hero-btn hero-btn--ghost" href={hotline.zalo} target="_blank" rel="noopener">Tư vấn qua Zalo</a>
+            </div>
           </div>
           <a class="scroll-indicator" href="#about" aria-label="Cuộn xuống">
             <span>Cuộn xuống</span>

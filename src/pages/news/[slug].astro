@@ -10,7 +10,7 @@ const { article } = Astro.props;
 const formatDate = (date: string) => new Intl.DateTimeFormat('vi-VN', { dateStyle: 'long', timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
 const paragraphs = article.body.split(/\n\s*\n/).filter((paragraph: string) => paragraph.trim());
 ---
-<SiteLayout title={`${article.title} | Thảo Nguyên`} description={article.summary}>
+<SiteLayout title={`${article.title} | Thảo Nguyên`} description={article.summary} image={article.image || undefined} type="article">
   <main class="page-shell catalog-page">
     <nav class="breadcrumbs" aria-label="Đường dẫn">
       <a href="/">Trang chủ</a><span aria-hidden="true">›</span>
